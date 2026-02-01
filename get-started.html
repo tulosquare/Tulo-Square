@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tulo Square | Get Started - Your Digital Village Square</title>
+
+<style>
+:root {
+  --dark-green:#0b3d2e;
+  --dark-green-hover:#0e4a37;
+  --orange:#d35400;
+  --orange-hover:#e67e22;
+  --white:#ffffff;
+  --bridge-blue:#3498db;
+}
+
+body {
+  background:#06271d;
+  color:var(--white);
+  font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  padding:40px 20px;
+  line-height:1.6;
+}
+
+.container {
+  max-width:900px;
+  margin:auto;
+}
+
+.progress {
+  height:6px;
+  background:rgba(255,255,255,.2);
+  border-radius:6px;
+  overflow:hidden;
+  margin-bottom:24px;
+}
+
+.progress-bar {
+  height:100%;
+  width:20%;
+  background:var(--orange);
+  transition:.4s;
+}
+
+.card {
+  background:var(--dark-green);
+  padding:32px;
+  border-radius:16px;
+  margin-bottom:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  animation:fade .35s ease;
+  border:1px solid rgba(211, 84, 0, 0.2);
+}
+
+@keyframes fade {
+  from {opacity:0; transform:translateY(8px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
+h2 {
+  color:var(--orange);
+  margin-top:0;
+  border-left:4px solid var(--orange);
+  padding-left:12px;
+}
+
+p {line-height:1.6;}
+
+.options {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  margin-top:20px;
+}
+
+button {cursor:pointer;}
+
+.btn {
+  padding:14px 30px;
+  border-radius:40px;
+  font-weight:bold;
+  border:none;
+  transition:.25s;
+  font-size:1rem;
+}
+
+.btn-primary {
+  background:linear-gradient(135deg, var(--orange), var(--orange-hover));
+  color:white;
+}
+
+.btn-outline {
+  background:transparent;
+  border:2px solid var(--orange);
+  color:var(--orange);
+}
+
+.btn:hover {
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(211, 84, 0, 0.3);
+}
+
+.hidden {display:none;}
+
+label {
+  display:block;
+  margin-top:14px;
+  font-weight:500;
+}
+
+input, select, textarea {
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.2);
+  margin-top:6px;
+  background:rgba(0,0,0,.2);
+  color:white;
+  font-family:inherit;
+}
+
+.preview {
+  background:rgba(0,0,0,.3);
+  border-radius:12px;
+  padding:20px;
+  margin-top:16px;
+  border-left:4px solid var(--orange);
+}
+
+.preview strong {
+  color:var(--orange);
+}
+
+.actions {
+  margin-top:24px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.note {
+  font-size:.85rem;
+  opacity:.85;
+  margin-top:10px;
+  font-style:italic;
+}
+
+.bridge-icon {
+  color:var(--bridge-blue);
+  margin-right:8px;
+}
+
+.pill {
+  display:inline-block;
+  background:rgba(211, 84, 0, 0.2);
+  color:var(--orange);
+  padding:4px 12px;
+  border-radius:20px;
+  font-size:0.85em;
+  margin-right:8px;
+  margin-bottom:8px;
+  border:1px solid rgba(211, 84, 0, 0.4);
+}
+
+.use-case-box {
+  background:rgba(211, 84, 0, 0.1);
+  border-left:4px solid var(--orange);
+  padding:15px;
+  border-radius:8px;
+  margin:16px 0;
+  font-style:italic;
+}
+
+.square-visual {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:20px 0;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.square-node {
+  background:rgba(0,0,0,.2);
+  border:2px solid var(--orange);
+  border-radius:10px;
+  padding:15px;
+  text-align:center;
+  min-width:120px;
+}
+
+.bridge-connector {
+  font-size:2em;
+  color:var(--bridge-blue);
+}
+
+/* Step-specific styles */
+#step1 .options button {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
+  height:100%;
+  text-align:center;
+  gap:10px;
+}
+
+#step1 .options button .emoji {
+  font-size:2em;
+  margin-bottom:5px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  body {
+    padding:20px 12px;
+  }
+  
+  .card {
+    padding:20px;
+  }
+  
+  .options {
+    grid-template-columns:1fr;
+  }
+  
+  .actions {
+    flex-direction:column;
+  }
+  
+  .btn {
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="progress">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- STEP 1: WELCOME -->
+<section class="card" id="step1">
+  <h2>Welcome to Tulo Square</h2>
+  <p>
+    <span class="highlight">Tulo Square</span> is your digital village square, bridging community savings with local opportunity. Start your community savings circle or connect with businesses in your area.
+  </p>
+  
+  <p><strong>Choose how you'd like to begin:</strong></p>
+
+  <div class="options">
+    <button class="btn btn-outline" onclick="chooseType('Family/Friends')">
+      <span class="emoji">👨‍👩‍👧‍👦</span>
+      <strong>Family & Friends</strong>
+      <small>Start a small savings circle</small>
+    </button>
+    <button class="btn btn-outline" onclick="chooseType('Community Group')">
+      <span class="emoji">👥</span>
+      <strong>Community Group</strong>
+      <small>Church, market, or association</small>
+    </button>
+    <button class="btn btn-outline" onclick="chooseType('Local Business')">
+      <span class="emoji">🏪</span>
+      <strong>Local Business</strong>
+      <small>Get community support</small>
+    </button>
+  </div>
+
+  <div class="square-visual">
+    <div class="square-node">
+      <strong>Community</strong>
+      <p>Saves together</p>
+    </div>
+    <div class="bridge-connector">🌉</div>
+    <div class="square-node">
+      <strong>Business</strong>
+      <p>Grows together</p>
+    </div>
+  </div>
+
+  <p class="note">
+    <span class="pill">Not a bank</span>
+    <span class="pill">Community-first</span>
+    <span class="pill">Transparent</span><br>
+    You can start small and grow your Square over time. All funds move directly between community members.
+  </p>
+</section>
+
+<!-- STEP 2: NAME YOUR SQUARE -->
+<section class="card hidden" id="step2">
+  <h2>Name Your Square</h2>
+  <p>
+    Choose a name that reflects your <strong>community purpose</strong>.
+  </p>
+
+  <input id="squareName" placeholder="e.g. Mwaba Family Savings Circle">
+
+  <div class="use-case-box">
+    <strong>Good examples:</strong><br>
+    • "Kalingalinga School Fees Pool"<br>
+    • "Matero Market Association Fund"<br>
+    • "Kitwe Youth Business Seed"<br>
+    • "Lusaka Women's Empowerment Circle"
+  </div>
+
+  <div class="note">
+    A clear name helps everyone understand the Square's purpose. You can always update it later.
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-outline" onclick="goBack()">Back</button>
+    <button class="btn btn-primary" onclick="goStep(3)">Continue</button>
+  </div>
+</section>
+
+<!-- STEP 3: SET COMMUNITY RULES -->
+<section class="card hidden" id="step3">
+  <h2>Set Your Square's Rules</h2>
+  <p>
+    Every community savings circle needs clear agreements. These are <strong>templates</strong> you can adapt with your members.
+  </p>
+
+  <label>How will decisions be made?</label>
+  <select id="decisionMaking">
+    <option>All members vote (recommended for small groups)</option>
+    <option>Designated leaders (treasurer + 2 others)</option>
+    <option>Unanimous agreement required</option>
+    <option>Majority vote (50% + 1)</option>
+  </select>
+
+  <label>Contribution schedule?</label>
+  <select id="contributions">
+    <option>Weekly contributions</option>
+    <option>Monthly contributions</option>
+    <option>When members can (flexible)</option>
+    <option>One-time joining fee + regular contributions</option>
+  </select>
+
+  <label>Goal amount (optional)</label>
+  <input id="goalAmount" placeholder="e.g. ZMK 50,000 or leave blank">
+
+  <div class="use-case-box">
+    <strong>Remember:</strong> These are <em>templates for community agreements</em>, not rules enforced by Tulo Square. Your community manages its own funds and decisions.
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-outline" onclick="goBack()">Back</button>
+    <button class="btn btn-primary" onclick="goStep(4)">Continue</button>
+  </div>
+</section>
+
+<!-- STEP 4: CONNECT TO BUSINESSES -->
+<section class="card hidden" id="step4">
+  <h2>Build Bridges to Business</h2>
+  <p>
+    The "Tulo" in Tulo Square means <strong>bridge</strong>. Will your Square connect with local businesses?
+  </p>
+
+  <label>How would you like to support local businesses?</label>
+  <select id="businessSupport">
+    <option>Not now, just saving as a group</option>
+    <option>Yes, we want to support specific businesses</option>
+    <option>Maybe later, show us options</option>
+    <option>We ARE a business seeking community support</option>
+  </select>
+
+  <label>Business types you're interested in (optional)</label>
+  <textarea id="businessTypes" placeholder="e.g. local farmers, tailors, grocery shops, restaurants..." rows="3"></textarea>
+
+  <div class="square-visual">
+    <div class="square-node">
+      <strong>Your Square</strong>
+      <p id="previewSquareName">[Your Square]</p>
+    </div>
+    <div class="bridge-connector">🌉</div>
+    <div class="square-node">
+      <strong>Local Business</strong>
+      <p id="previewBusinessType">Community support</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="bridge-icon">🌉</span> Building bridges is optional. Many Squares start by saving together, then explore business connections later.
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-outline" onclick="goBack()">Back</button>
+    <button class="btn btn-primary" onclick="goStep(5)">Continue</button>
+  </div>
+</section>
+
+<!-- STEP 5: PREVIEW YOUR SQUARE -->
+<section class="card hidden" id="step5">
+  <h2>Preview Your Village Square</h2>
+
+  <div class="preview">
+    <strong>Square Name:</strong> <span id="pName"></span><br>
+    <strong>Square Type:</strong> <span id="pType"></span><br>
+    <strong>Status:</strong> Forming<br>
+    <strong>Community Agreement Template:</strong><br>
+    – Decisions: <span id="pDecision"></span><br>
+    – Contributions: <span id="pContribution"></span><br>
+    – Goal: <span id="pGoal"></span><br><br>
+    <strong>Bridge to Business:</strong> <span id="pBusiness"></span><br>
+    <strong>Interested in:</strong> <span id="pBusinessTypes"></span><br><br>
+    
+    <em>Next steps after creating your Square:</em><br>
+    1. Invite community members<br>
+    2. Finalize agreements together<br>
+    3. Start contributing (direct member-to-member)<br>
+    4. Explore business connections
+  </div>
+
+  <div class="note">
+    <strong>Important:</strong> Tulo Square provides coordination tools, not financial services. All funds move directly between community members via mobile money or bank transfers.
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-outline" onclick="goStep(3)">Edit Rules</button>
+    <button class="btn btn-outline" onclick="goBack()">Back</button>
+    <button class="btn btn-primary" onclick="finish()">Create Your Square</button>
+  </div>
+</section>
+
+<!-- FINAL STEP -->
+<section class="card hidden" id="final">
+  <h2>🎉 Your Village Square is Ready!</h2>
+  
+  <div class="square-visual">
+    <div class="square-node">
+      <strong>Community Formed</strong>
+      <p>Your Square is created</p>
+    </div>
+    <div class="bridge-connector">🌉</div>
+    <div class="square-node">
+      <strong>Opportunity Awaits</strong>
+      <p>Bridges ready to build</p>
+    </div>
+  </div>
+
+  <p>
+    You've taken the first step in building your digital village square! 
+    Your Square is now ready for members to join and start saving together.
+  </p>
+
+  <div class="preview">
+    <strong>What happens next:</strong><br>
+    • <span class="bridge-icon">🌉</span> Complete your community profile<br>
+    • <span class="bridge-icon">🌉</span> Invite members to your Square<br>
+    • <span class="bridge-icon">🌉</span> Access financial education modules<br>
+    • <span class="bridge-icon">🌉</span> Browse verified local businesses<br>
+    • <span class="bridge-icon">🌉</span> Track your community's growth
+  </div>
+
+  <div class="actions">
+    <a href="register.html" class="btn btn-primary">Create Your Account</a>
+    <button class="btn btn-outline" onclick="resetFlow()">Create Another Square</button>
+  </div>
+
+  <p class="note">
+    Starting with a small group is smart. Growing together is powerful. 
+    <strong>Tulo Square: Your digital village square, bridging savings and opportunity.</strong>
+  </p>
+</section>
+
+</div>
+
+<script>
+let state = JSON.parse(localStorage.getItem('tuloSquare')) || { step:1 };
+const progress = document.getElementById('progressBar');
+
+function chooseType(type){
+  state.type = type;
+  goStep(2);
+}
+
+function goStep(step){
+  saveState();
+  document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
+  document.getElementById('step'+step).classList.remove('hidden');
+  state.step = step;
+  progress.style.width = (step*20)+'%';
+  
+  // Update previews in real-time
+  if (step >= 4) {
+    document.getElementById('previewSquareName').textContent = state.squareName || '[Your Square]';
+    document.getElementById('previewBusinessType').textContent = state.businessSupport || 'Community support';
+  }
+  
+  saveState();
+}
+
+function goBack(){
+  if(state.step > 1){
+    goStep(state.step - 1);
+  }
+}
+
+function finish(){
+  saveState();
+  
+  // Update preview with actual values
+  document.getElementById('pName').textContent = state.squareName || 'Not set';
+  document.getElementById('pType').textContent = state.type || 'Not set';
+  document.getElementById('pDecision').textContent = state.decisionMaking || 'Not set';
+  document.getElementById('pContribution').textContent = state.contributions || 'Not set';
+  document.getElementById('pGoal').textContent = state.goalAmount || 'No specific goal';
+  document.getElementById('pBusiness').textContent = state.businessSupport || 'Not set';
+  document.getElementById('pBusinessTypes').textContent = state.businessTypes || 'Not specified';
+
+  document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
+  document.getElementById('final').classList.remove('hidden');
+  progress.style.width = '100%';
+  state.step = 'done';
+  saveState();
+}
+
+function resetFlow(){
+  localStorage.removeItem('tuloSquare');
+  location.reload();
+}
+
+function saveState(){
+  state.squareName = document.getElementById('squareName')?.value || state.squareName;
+  state.decisionMaking = document.getElementById('decisionMaking')?.value || state.decisionMaking;
+  state.contributions = document.getElementById('contributions')?.value || state.contributions;
+  state.goalAmount = document.getElementById('goalAmount')?.value || state.goalAmount;
+  state.businessSupport = document.getElementById('businessSupport')?.value || state.businessSupport;
+  state.businessTypes = document.getElementById('businessTypes')?.value || state.businessTypes;
+  localStorage.setItem('tuloSquare', JSON.stringify(state));
+}
+
+// Initialize on load
+window.onload = function(){
+  // Show appropriate step based on saved state
+  if(state.step && state.step !== 'done'){
+    document.getElementById('step1').classList.add('hidden');
+    goStep(state.step);
+    
+    // Restore form values
+    if (state.squareName) document.getElementById('squareName').value = state.squareName;
+    if (state.goalAmount) document.getElementById('goalAmount').value = state.goalAmount;
+    if (state.businessTypes) document.getElementById('businessTypes').value = state.businessTypes;
+  }
+  
+  // Add some interactivity
+  document.querySelectorAll('select').forEach(select => {
+    select.addEventListener('change', saveState);
+  });
+  
+  document.querySelectorAll('input, textarea').forEach(input => {
+    input.addEventListener('input', saveState);
+  });
+};
+</script>
+
+</body>
+</html>
