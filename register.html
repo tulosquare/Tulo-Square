@@ -234,11 +234,11 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.3s ease;
       margin-top: 10px;
     }
 
-    .primary-btn:hover {
+    .primary-btn:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
     }
@@ -246,29 +246,78 @@
     .primary-btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .primary-btn.success {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      animation: pulse 2s infinite;
     }
 
     /* MESSAGES */
+    .error-text, .success-text {
+      animation: fadeIn 0.3s ease-in;
+      position: relative;
+      padding: 15px 40px 15px 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .error-text i, .success-text i {
+      font-size: 1.2em;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
     .error-text {
       color: var(--tzf-error);
       background: rgba(231, 76, 60, 0.1);
-      padding: 12px;
-      border-radius: 8px;
-      margin: 15px 0;
       border-left: 4px solid var(--tzf-error);
-      display: none;
     }
 
     .success-text {
       color: var(--tzf-success);
       background: rgba(46, 204, 113, 0.1);
-      padding: 12px;
-      border-radius: 8px;
-      margin: 15px 0;
       border-left: 4px solid var(--tzf-success);
-      display: none;
+      animation: fadeIn 0.3s ease-in, pulse 2s infinite;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+    }
+
+    @keyframes loading {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* LOADING DOTS */
+    .loading-dots {
+      display: inline-block;
+    }
+
+    .loading-dots span {
+      animation: loading 1.5s infinite;
+      opacity: 0;
+    }
+
+    .loading-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loading-dots span:nth-child(3) {
+      animation-delay: 0.4s;
     }
 
     /* FOOTER & LINKS */
@@ -322,30 +371,6 @@
       text-align: center;
     }
 
-    /* LOADING DOTS */
-    .loading-dots {
-      display: inline-block;
-    }
-
-    .loading-dots span {
-      animation: loading 1.5s infinite;
-      opacity: 0;
-    }
-
-    .loading-dots span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .loading-dots span:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes loading {
-      0% { opacity: 0; }
-      50% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-
     /* RESPONSIVE */
     @media (max-width: 600px) {
       .auth-hero h1 {
@@ -372,6 +397,28 @@
       nav a {
         margin-left: 0;
       }
+    }
+
+    /* DEBUG BUTTON (remove in production) */
+    .debug-btn {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.7);
+      padding: 10px;
+      border-radius: 8px;
+      color: white;
+      font-size: 12px;
+      z-index: 1000;
+    }
+
+    .debug-btn button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -437,7 +484,7 @@
         <input class="input" id="phone" placeholder="97 123 4567" type="tel" required />
       </div>
       <small style="color: var(--tzf-text-muted); margin-top: 5px; display: block;">
-        Format: 97 123 4567 (without spaces will be added automatically)
+        Format: 97 123 4567 (spaces will be added automatically)
       </small>
     </div>
 
@@ -454,7 +501,7 @@
       <div class="password-strength">
         <div class="strength-meter" id="strengthMeter"></div>
       </div>
-      <div class="strength-label" id="strengthLabel">Strength: Weak</div>
+      <div class="strength-label" id="strengthLabel">Strength: None</div>
     </div>
 
     <div class="input-group">
@@ -496,8 +543,8 @@
       </div>
     </div>
 
-    <div id="signupError" class="error-text"></div>
-    <div id="signupSuccess" class="success-text"></div>
+    <div id="signupError" class="error-text" onclick="this.style.display='none'"></div>
+    <div id="signupSuccess" class="success-text" onclick="this.style.display='none'"></div>
 
     <button type="submit" class="primary-btn" id="signupBtn">
       <i class="fas fa-user-plus"></i> Join Tulo Square
@@ -517,6 +564,11 @@
     We are not a bank, investment platform, or financial institution.
   </p>
 </footer>
+
+<!-- DEBUG BUTTON (remove in production) -->
+<div class="debug-btn">
+  <button onclick="testFirebase()">Test Firebase</button>
+</div>
 
 <script>
   // Password toggle function
@@ -628,31 +680,53 @@
       });
     }
   });
+
+  // Test Firebase function
+  window.testFirebase = async function() {
+    console.log('=== Testing Firebase Connection ===');
+    try {
+      alert('Testing Firebase connection... Check browser console (F12) for results.');
+    } catch (e) {
+      console.error('Firebase test failed:', e);
+      alert('Firebase connection test failed: ' + e.message);
+    }
+  };
 </script>
 
-<!-- Firebase Registration Script -->
+<!-- FIREBASE REGISTRATION SCRIPT -->
 <script type="module">
   import { auth, db } from "./firebase.js";
   import { 
     createUserWithEmailAndPassword, 
-    updateProfile 
+    updateProfile,
+    sendEmailVerification 
   } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
   import { 
     ref, 
     set 
   } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
+  // Initialize on DOM load
   document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔥 Firebase Registration Script Loaded');
+    
     const signupForm = document.getElementById('signupForm');
     const signupBtn = document.getElementById('signupBtn');
     const errorDiv = document.getElementById('signupError');
     const successDiv = document.getElementById('signupSuccess');
     const termsCheckbox = document.getElementById('terms');
     
-    if (!signupForm) return;
+    if (!signupForm) {
+      console.error('❌ Signup form not found!');
+      return;
+    }
     
+    console.log('✅ Form elements found:', { signupForm, signupBtn, errorDiv, successDiv });
+    
+    // Form submission handler
     signupForm.addEventListener('submit', async function(e) {
       e.preventDefault();
+      console.log('📝 Form submission started');
       
       // Check terms agreement
       if (!termsCheckbox.checked) {
@@ -668,6 +742,8 @@
       const confirmPassword = document.getElementById('confirmPassword').value;
       const referralSource = document.getElementById('referralSource').value;
       const referralCode = document.getElementById('referralCode').value.trim();
+      
+      console.log('📋 Form data:', { name, email, phone: '***', referralSource });
       
       // Basic validation
       if (!name || !email || !phone || !password || !confirmPassword || !referralSource) {
@@ -705,31 +781,35 @@
         return;
       }
       
-      // Disable button and show loading
+      // Show loading state
       signupBtn.disabled = true;
       signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>';
       
+      // Clear previous messages
+      clearMessages();
+      
       try {
-        console.log('Starting registration process...');
+        console.log('🚀 Starting Firebase registration...');
         
         // 1. Create user in Firebase Authentication
+        console.log('🔐 Creating Firebase Auth user...');
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        console.log('Firebase Auth user created:', user.uid);
+        console.log('✅ Firebase Auth user created:', { uid: user.uid, email: user.email });
         
         // 2. Update profile with display name
-        await updateProfile(user, {
-          displayName: name
-        });
-        console.log('User profile updated');
+        console.log('👤 Updating user profile...');
+        await updateProfile(user, { displayName: name });
+        console.log('✅ User profile updated');
         
         // 3. Generate Tulo Square referral code
         const myReferralCode = "TULO" + Math.floor(100000 + Math.random() * 900000);
+        console.log('🎯 Generated referral code:', myReferralCode);
         
         // 4. Format phone number
         const fullPhone = '+260' + phoneDigits;
         
-        // 5. Create user data structure matching Firebase rules
+        // 5. Create user data structure
         const userData = {
           profile: {
             uid: user.uid,
@@ -759,15 +839,16 @@
           role: "user"
         };
         
-        console.log('Attempting to write to Realtime Database...');
-        console.log('Path: users/' + user.uid);
-        console.log('Data structure:', userData);
+        console.log('💾 Writing to Realtime Database...');
+        console.log('📁 Path: users/' + user.uid);
+        console.log('📄 Data structure:', JSON.stringify(userData, null, 2));
         
         // 6. Save to Realtime Database
-        await set(ref(db, 'users/' + user.uid), userData);
-        console.log('User data written to Realtime Database');
+        const userRef = ref(db, 'users/' + user.uid);
+        await set(userRef, userData);
+        console.log('✅ User data written to Realtime Database');
         
-        // 7. If there's a referral code, log it separately
+        // 7. Log referral if provided
         if (referralCode) {
           try {
             const referralLog = {
@@ -778,95 +859,177 @@
               timestamp: Date.now()
             };
             await set(ref(db, 'referralLogs/' + referralCode + '_' + user.uid), referralLog);
-            console.log('Referral logged');
+            console.log('✅ Referral logged successfully');
           } catch (referralError) {
-            console.warn('Could not log referral:', referralError);
-            // Continue anyway - referral logging is not critical
+            console.warn('⚠️ Could not log referral:', referralError);
           }
         }
         
-        // 8. Show success message
-        showSuccess('Account created successfully! Welcome to Tulo Square. Redirecting to dashboard...');
-        
-        // 9. Send email verification (optional)
+        // 8. Send email verification
         try {
-          // Uncomment if you want to send verification email
-          // await sendEmailVerification(user);
-          // console.log('Verification email sent');
+          await sendEmailVerification(user);
+          console.log('✅ Verification email sent');
         } catch (verificationError) {
-          console.warn('Could not send verification email:', verificationError);
+          console.warn('⚠️ Could not send verification email:', verificationError);
         }
         
-        // 10. Redirect to dashboard after 2 seconds
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 2000);
+        // 9. SUCCESS - Update UI
+        console.log('🎉 Registration successful!');
+        
+        // Update button to success state
+        signupBtn.classList.add('success');
+        signupBtn.innerHTML = '<i class="fas fa-check"></i> Account Created!';
+        
+        // Show success message
+        showSuccess(`
+          <div style="text-align: center;">
+            <i class="fas fa-check-circle" style="font-size: 2em; margin-bottom: 10px; display: block; color: #2ecc71;"></i>
+            <strong style="font-size: 1.2em; display: block; margin-bottom: 10px;">Welcome to Tulo Square, ${name}!</strong>
+            <p style="margin: 10px 0;">
+              Your account has been created successfully!<br>
+              <strong>Your referral code:</strong> <span style="background: rgba(46, 204, 113, 0.2); padding: 5px 10px; border-radius: 4px; font-family: monospace;">${myReferralCode}</span>
+            </p>
+            <p style="margin: 10px 0; font-size: 0.9em;">
+              <i class="fas fa-info-circle"></i> You will be redirected to login in <span id="countdown">5</span> seconds...
+            </p>
+          </div>
+        `);
+        
+        // 10. Start countdown and redirect
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+        const countdownInterval = setInterval(() => {
+          countdown--;
+          if (countdownElement) countdownElement.textContent = countdown;
+          if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            redirectToLogin(email);
+          }
+        }, 1000);
         
       } catch (error) {
-        // Handle errors
-        console.error('Registration error:', error);
-        console.error('Error code:', error.code);
-        console.error('Error message:', error.message);
+        // ERROR - Handle failure
+        console.error('❌ Registration failed:', error);
         
+        // Reset button
         signupBtn.disabled = false;
         signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Join Tulo Square';
+        signupBtn.classList.remove('success');
         
-        let errorMessage = 'Error creating account. ';
+        // Parse error message
+        let userMessage = 'Error creating account. ';
+        let detailedMessage = '';
         
         switch (error.code) {
           case 'auth/email-already-in-use':
-            errorMessage = 'This email is already registered. Please use a different email or try logging in.';
+            userMessage = 'This email is already registered.';
+            detailedMessage = 'Please use a different email or try <a href="login.html" style="color: #e67e22;">logging in</a> if this is your account.';
             break;
           case 'auth/invalid-email':
-            errorMessage = 'Invalid email address. Please check your email format.';
+            userMessage = 'Invalid email address.';
+            detailedMessage = 'Please check your email format (example: name@domain.com).';
             break;
           case 'auth/weak-password':
-            errorMessage = 'Password is too weak. Please use at least 6 characters with a mix of letters and numbers.';
+            userMessage = 'Password is too weak.';
+            detailedMessage = 'Please use at least 6 characters with a mix of letters and numbers.';
             break;
           case 'auth/operation-not-allowed':
-            errorMessage = 'Email/password sign-up is currently disabled. Please contact support.';
+            userMessage = 'Email/password sign-up is currently disabled.';
+            detailedMessage = 'Please contact support at support@tulosquare.co.zm';
             break;
           case 'auth/network-request-failed':
-            errorMessage = 'Network error. Please check your internet connection and try again.';
+            userMessage = 'Network error.';
+            detailedMessage = 'Please check your internet connection and try again.';
             break;
           case 'PERMISSION_DENIED':
           case 'permission_denied':
-            errorMessage = 'Permission denied. This might be a database rules issue. Please contact support.';
-            break;
           case 'database/permission-denied':
-            errorMessage = 'Database permission denied. Please try again or contact support.';
+            userMessage = 'Database permission denied.';
+            detailedMessage = 'This might be a security rules issue. Please contact support.';
             break;
           default:
-            if (error.message.includes('permission')) {
-              errorMessage = 'Database permission error. This might be due to security rules. Error: ' + error.message;
-            } else {
-              errorMessage += error.message.replace('Firebase: ', '').replace('auth/', '');
-            }
+            userMessage = 'Registration failed. ';
+            detailedMessage = error.message || 'Unknown error occurred.';
         }
         
-        showError(errorMessage);
+        // Show error to user
+        showError(`
+          <div>
+            <strong>${userMessage}</strong><br>
+            ${detailedMessage}<br><br>
+            <small style="opacity: 0.8;">
+              <i class="fas fa-life-ring"></i> Need help? Contact support: support@tulosquare.co.zm
+            </small>
+          </div>
+        `);
       }
     });
     
+    // Helper functions
+    function clearMessages() {
+      if (errorDiv) {
+        errorDiv.style.display = 'none';
+        errorDiv.innerHTML = '';
+      }
+      if (successDiv) {
+        successDiv.style.display = 'none';
+        successDiv.innerHTML = '';
+      }
+    }
+    
     function showError(message) {
+      console.log('Showing error message');
       if (errorDiv) {
         errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
         errorDiv.style.display = 'block';
         if (successDiv) successDiv.style.display = 'none';
         
-        // Auto-hide error after 10 seconds
-        setTimeout(() => {
-          errorDiv.style.display = 'none';
-        }, 10000);
+        // Scroll to error
+        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
     
     function showSuccess(message) {
+      console.log('Showing success message');
       if (successDiv) {
         successDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
         successDiv.style.display = 'block';
         if (errorDiv) errorDiv.style.display = 'none';
+        
+        // Scroll to success
+        successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Play success sound (optional)
+        try {
+          const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3');
+          audio.volume = 0.3;
+          audio.play().catch(e => console.log('Audio play failed:', e));
+        } catch (e) {
+          // Ignore audio errors
+        }
       }
+    }
+    
+    function redirectToLogin(email) {
+      console.log('🔗 Redirecting to login page...');
+      const params = new URLSearchParams({
+        registration: 'success',
+        email: email,
+        message: 'welcome_to_tulo_square'
+      });
+      window.location.href = `login.html?${params.toString()}`;
+    }
+    
+    // Test Firebase connection on page load
+    console.log('🔄 Testing Firebase connection...');
+    console.log('🔧 Auth service:', auth ? '✅ Available' : '❌ Not available');
+    console.log('🗄️ Database service:', db ? '✅ Available' : '❌ Not available');
+    
+    if (!auth || !db) {
+      console.error('❌ Firebase services not initialized properly');
+      showError('Firebase services not loaded. Please refresh the page.');
+    } else {
+      console.log('✅ Firebase initialized successfully');
     }
   });
 </script>
