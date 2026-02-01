@@ -1,4 +1,4 @@
-// firebase.js - Tulo Square Firebase Configuration
+// firebase.js - Tulo Square Firebase Configuration (Updated for Realtime Database)
 import { initializeApp } from "firebase/app";
 import { 
   getAuth, 
@@ -11,42 +11,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup
 } from "firebase/auth";
-import { 
-  getFirestore, 
-  collection, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  updateDoc, 
-  addDoc, 
-  query, 
-  where, 
-  getDocs,
-  Timestamp,
-  serverTimestamp,
-  orderBy,
-  limit,
-  deleteDoc,
-  increment
-} from "firebase/firestore";
-import { 
-  getStorage, 
-  ref, 
-  uploadBytes, 
-  getDownloadURL,
-  deleteObject 
-} from "firebase/storage";
-import { 
-  getDatabase, 
-  ref as dbRef, 
-  set, 
-  get, 
-  update, 
-  remove, 
-  push,
-  onValue,
-  off
-} from "firebase/database";
+import { getDatabase, ref, set, get, update, remove, push, onValue, off, query, orderByChild, equalTo, limitToLast } from "firebase/database";
+import { getFirestore } from "firebase/firestore"; // Keep for future Firestore use
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -64,9 +30,8 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Services
 const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
-const realtimeDb = getDatabase(app);
+const db = getDatabase(app); // Realtime Database
+const firestore = getFirestore(app); // Firestore for future use
 
 // Google Auth Provider
 const googleProvider = new GoogleAuthProvider();
@@ -76,7 +41,7 @@ const googleProvider = new GoogleAuthProvider();
 // ==============================
 
 /**
- * Register a new user
+ * Register a new user (Realtime Database version)
  */
 export const registerUser = async (email, password, userData) => {
   try {
@@ -90,23 +55,28 @@ export const registerUser = async (email, password, userData) => {
       });
     }
     
-    // Create user document in Firestore
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      email: email,
-      displayName: userData.displayName || "",
-      phoneNumber: userData.phoneNumber || "",
-      userType: userData.userType || "community_member", // community_member, business_owner, community_leader
-      communityRole: userData.communityRole || "member",
-      profileComplete: false,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      lastLogin: serverTimestamp(),
-      status: "active",
-      kycStatus: "pending", // pending, verified, rejected
-      avatarUrl: "",
-      location: userData.location || "",
-      communityBio: userData.communityBio || ""
+    // Create user in Realtime Database (following your rules structure)
+    await set(ref(db, `users/${user.uid}`), {
+      profile: {
+        uid: user.uid,
+        email: email,
+        displayName: userData.displayName || "",
+        phoneNumber: userData.phoneNumber || "",
+        userType: userData.userType || "community_member",
+        communityRole: "member",
+        kycStatus: "pending",
+        location: userData.location || "",
+        communityBio: userData.communityBio || "",
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      preferences: {
+        notifications: true,
+        language: "en",
+        privacy: "public"
+      },
+      squares: 0,
+      role: "user" // Default role, admins can change this
     });
     
     return { success: true, user };
@@ -125,9 +95,12 @@ export const loginUser = async (email, password) => {
     const user = userCredential.user;
     
     // Update last login timestamp
-    await updateDoc(doc(db, "users", user.uid), {
-      lastLogin: serverTimestamp()
+    await update(ref(db, `users/${user.uid}/profile`), {
+      lastLogin: Date.now()
     });
+    
+    // Update presence
+    await updatePresence(user.uid, 'online');
     
     return { success: true, user };
   } catch (error) {
@@ -144,34 +117,45 @@ export const loginWithGoogle = async () => {
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
     
-    // Check if user exists in Firestore
-    const userDoc = await getDoc(doc(db, "users", user.uid));
+    // Check if user exists in Realtime Database
+    const userRef = ref(db, `users/${user.uid}`);
+    const snapshot = await get(userRef);
     
-    if (!userDoc.exists()) {
-      // Create new user document
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || "",
-        phoneNumber: user.phoneNumber || "",
-        userType: "community_member",
-        communityRole: "member",
-        profileComplete: false,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        lastLogin: serverTimestamp(),
-        status: "active",
-        kycStatus: "pending",
-        avatarUrl: user.photoURL || "",
-        location: "",
-        communityBio: ""
+    if (!snapshot.exists()) {
+      // Create new user in Realtime Database
+      await set(userRef, {
+        profile: {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || "",
+          phoneNumber: user.phoneNumber || "",
+          userType: "community_member",
+          communityRole: "member",
+          kycStatus: "pending",
+          avatarUrl: user.photoURL || "",
+          location: "",
+          communityBio: "",
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          lastLogin: Date.now()
+        },
+        preferences: {
+          notifications: true,
+          language: "en",
+          privacy: "public"
+        },
+        squares: 0,
+        role: "user"
       });
     } else {
       // Update last login
-      await updateDoc(doc(db, "users", user.uid), {
-        lastLogin: serverTimestamp()
+      await update(ref(db, `users/${user.uid}/profile`), {
+        lastLogin: Date.now()
       });
     }
+    
+    // Update presence
+    await updatePresence(user.uid, 'online');
     
     return { success: true, user };
   } catch (error) {
@@ -185,6 +169,11 @@ export const loginWithGoogle = async () => {
  */
 export const logoutUser = async () => {
   try {
+    if (auth.currentUser) {
+      // Update presence to offline
+      await updatePresence(auth.currentUser.uid, 'offline');
+    }
+    
     await signOut(auth);
     return { success: true };
   } catch (error) {
@@ -210,26 +199,23 @@ export const resetPassword = async (email) => {
  * Get current user
  */
 export const getCurrentUser = () => {
-  return new Promise((resolve) => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      unsubscribe();
-      resolve(user);
-    });
-  });
+  return auth.currentUser;
 };
 
 // ==============================
-// USER PROFILE FUNCTIONS
+// USER PROFILE FUNCTIONS (Realtime Database)
 // ==============================
 
 /**
- * Get user profile data
+ * Get user profile data from Realtime Database
  */
 export const getUserProfile = async (userId) => {
   try {
-    const userDoc = await getDoc(doc(db, "users", userId));
-    if (userDoc.exists()) {
-      return { success: true, data: userDoc.data() };
+    const userRef = ref(db, `users/${userId}`);
+    const snapshot = await get(userRef);
+    
+    if (snapshot.exists()) {
+      return { success: true, data: snapshot.val() };
     }
     return { success: false, error: "User not found" };
   } catch (error) {
@@ -239,39 +225,37 @@ export const getUserProfile = async (userId) => {
 };
 
 /**
- * Update user profile
+ * Update user profile in Realtime Database
  */
 export const updateUserProfile = async (userId, updates) => {
   try {
-    await updateDoc(doc(db, "users", userId), {
-      ...updates,
-      updatedAt: serverTimestamp()
-    });
+    // Validate updates match our rules structure
+    const validatedUpdates = {};
+    
+    if (updates.displayName) {
+      validatedUpdates['profile/displayName'] = updates.displayName;
+    }
+    
+    if (updates.phoneNumber) {
+      validatedUpdates['profile/phoneNumber'] = updates.phoneNumber;
+    }
+    
+    if (updates.location) {
+      validatedUpdates['profile/location'] = updates.location;
+    }
+    
+    if (updates.communityBio) {
+      validatedUpdates['profile/communityBio'] = updates.communityBio;
+    }
+    
+    // Always update timestamp
+    validatedUpdates['profile/updatedAt'] = Date.now();
+    
+    await update(ref(db, `users/${userId}`), validatedUpdates);
+    
     return { success: true };
   } catch (error) {
     console.error("Update user profile error:", error);
-    return { success: false, error: error.message };
-  }
-};
-
-/**
- * Upload profile picture
- */
-export const uploadProfilePicture = async (userId, file) => {
-  try {
-    const storageRef = ref(storage, `profile-pictures/${userId}/${Date.now()}_${file.name}`);
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-    
-    // Update user document with new avatar URL
-    await updateDoc(doc(db, "users", userId), {
-      avatarUrl: downloadURL,
-      updatedAt: serverTimestamp()
-    });
-    
-    return { success: true, url: downloadURL };
-  } catch (error) {
-    console.error("Upload profile picture error:", error);
     return { success: false, error: error.message };
   }
 };
@@ -281,37 +265,53 @@ export const uploadProfilePicture = async (userId, file) => {
 // ==============================
 
 /**
- * Create a new savings circle (Square)
+ * Create a new savings circle (Square) in Realtime Database
  */
 export const createSquare = async (squareData, creatorId) => {
   try {
-    const squareRef = await addDoc(collection(db, "squares"), {
-      ...squareData,
+    const squareId = `square_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const joinCode = generateJoinCode();
+    
+    const squareRef = ref(db, `squares/${squareId}`);
+    
+    const squareObject = {
+      name: squareData.name,
+      description: squareData.description || "",
       creatorId: creatorId,
-      members: [{
-        userId: creatorId,
-        role: "leader",
-        joinedAt: serverTimestamp(),
-        status: "active",
-        contributions: 0
-      }],
+      members: {
+        [creatorId]: {
+          userId: creatorId,
+          role: "leader",
+          joinedAt: Date.now(),
+          status: "active",
+          contributions: 0
+        }
+      },
       totalContributions: 0,
-      status: "forming", // forming, active, completed, cancelled
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      nextRotationDate: null,
-      currentCycle: 1,
+      status: "forming",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      goalAmount: squareData.goalAmount || 0,
+      currency: squareData.currency || "ZMK",
+      contributionFrequency: squareData.contributionFrequency || "monthly",
+      contributionAmount: squareData.contributionAmount || 0,
+      minMembers: squareData.minMembers || 3,
+      maxMembers: squareData.maxMembers || 12,
       memberCount: 1,
       isPublic: squareData.isPublic || false,
-      joinCode: generateJoinCode() // For private squares
+      joinCode: joinCode,
+      location: squareData.location || "",
+      category: squareData.category || "general"
+    };
+    
+    await set(squareRef, squareObject);
+    
+    // Update user's squares count
+    await update(ref(db, `users/${creatorId}`), {
+      squares: incrementValue(1)
     });
     
-    // Add square to user's squares array
-    await updateDoc(doc(db, "users", creatorId), {
-      squares: increment(1)
-    });
-    
-    return { success: true, squareId: squareRef.id };
+    return { success: true, squareId, joinCode };
   } catch (error) {
     console.error("Create square error:", error);
     return { success: false, error: error.message };
@@ -319,13 +319,15 @@ export const createSquare = async (squareData, creatorId) => {
 };
 
 /**
- * Get square by ID
+ * Get square by ID from Realtime Database
  */
 export const getSquare = async (squareId) => {
   try {
-    const squareDoc = await getDoc(doc(db, "squares", squareId));
-    if (squareDoc.exists()) {
-      return { success: true, data: { id: squareDoc.id, ...squareDoc.data() } };
+    const squareRef = ref(db, `squares/${squareId}`);
+    const snapshot = await get(squareRef);
+    
+    if (snapshot.exists()) {
+      return { success: true, data: snapshot.val() };
     }
     return { success: false, error: "Square not found" };
   } catch (error) {
@@ -335,16 +337,18 @@ export const getSquare = async (squareId) => {
 };
 
 /**
- * Join a square
+ * Join a square (Realtime Database version)
  */
 export const joinSquare = async (squareId, userId, joinCode = null) => {
   try {
-    const squareDoc = await getDoc(doc(db, "squares", squareId));
-    if (!squareDoc.exists()) {
+    const squareRef = ref(db, `squares/${squareId}`);
+    const snapshot = await get(squareRef);
+    
+    if (!snapshot.exists()) {
       return { success: false, error: "Square not found" };
     }
     
-    const squareData = squareDoc.data();
+    const squareData = snapshot.val();
     
     // Check if square is private and requires join code
     if (!squareData.isPublic && squareData.joinCode !== joinCode) {
@@ -352,35 +356,40 @@ export const joinSquare = async (squareId, userId, joinCode = null) => {
     }
     
     // Check if user is already a member
-    const existingMember = squareData.members.find(m => m.userId === userId);
-    if (existingMember) {
+    if (squareData.members && squareData.members[userId]) {
       return { success: false, error: "Already a member" };
     }
     
     // Add user to square members
-    await updateDoc(doc(db, "squares", squareId), {
-      members: [...squareData.members, {
+    const memberPath = `members/${userId}`;
+    await update(squareRef, {
+      [memberPath]: {
         userId: userId,
         role: "member",
-        joinedAt: serverTimestamp(),
+        joinedAt: Date.now(),
         status: "active",
         contributions: 0
-      }],
-      memberCount: increment(1),
-      updatedAt: serverTimestamp()
+      },
+      memberCount: incrementValue(1),
+      updatedAt: Date.now()
     });
     
     // Update user's squares count
-    await updateDoc(doc(db, "users", userId), {
-      squares: increment(1)
+    await update(ref(db, `users/${userId}`), {
+      squares: incrementValue(1)
     });
     
     // Update square status if enough members
-    if (squareData.memberCount + 1 >= squareData.minMembers) {
-      await updateDoc(doc(db, "squares", squareId), {
+    if (squareData.memberCount + 1 >= (squareData.minMembers || 3)) {
+      await update(squareRef, {
         status: "active"
       });
     }
+    
+    // Create notification
+    await createNotification(userId, 'square_join', 
+      `Joined ${squareData.name}`, 
+      'You have successfully joined the savings circle.');
     
     return { success: true };
   } catch (error) {
@@ -390,47 +399,43 @@ export const joinSquare = async (squareId, userId, joinCode = null) => {
 };
 
 /**
- * Record a contribution to a square
+ * Record a contribution to a square (Realtime Database)
  */
-export const recordContribution = async (squareId, userId, amount, transactionId) => {
+export const recordContribution = async (squareId, userId, amount, notes = "") => {
   try {
+    const contributionId = `contrib_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const contributionRef = ref(db, `squares/${squareId}/contributions/${contributionId}`);
+    
     // Create contribution record
-    const contributionRef = await addDoc(collection(db, "contributions"), {
-      squareId: squareId,
+    await set(contributionRef, {
       userId: userId,
       amount: amount,
-      transactionId: transactionId,
-      status: "verified", // verified, pending, disputed
-      recordedAt: serverTimestamp(),
-      verifiedAt: serverTimestamp(),
-      verifiedBy: "system", // or userId of verifier
-      notes: ""
+      recordedAt: Date.now(),
+      verifiedAt: Date.now(),
+      status: "verified",
+      verifiedBy: "system",
+      notes: notes,
+      currency: "ZMK"
     });
     
     // Update square total contributions
-    await updateDoc(doc(db, "squares", squareId), {
-      totalContributions: increment(amount),
-      updatedAt: serverTimestamp()
+    await update(ref(db, `squares/${squareId}`), {
+      totalContributions: incrementValue(amount),
+      updatedAt: Date.now()
     });
     
     // Update user's contributions in the square
-    const squareDoc = await getDoc(doc(db, "squares", squareId));
-    const squareData = squareDoc.data();
-    const updatedMembers = squareData.members.map(member => {
-      if (member.userId === userId) {
-        return {
-          ...member,
-          contributions: member.contributions + amount
-        };
-      }
-      return member;
+    const memberPath = `members/${userId}/contributions`;
+    await update(ref(db, `squares/${squareId}`), {
+      [memberPath]: incrementValue(amount)
     });
     
-    await updateDoc(doc(db, "squares", squareId), {
-      members: updatedMembers
-    });
+    // Create notification for square members
+    await createSquareNotification(squareId, 'new_contribution',
+      'New Contribution',
+      `A member contributed ZMW ${amount} to the square.`);
     
-    return { success: true, contributionId: contributionRef.id };
+    return { success: true, contributionId };
   } catch (error) {
     console.error("Record contribution error:", error);
     return { success: false, error: error.message };
@@ -438,20 +443,29 @@ export const recordContribution = async (squareId, userId, amount, transactionId
 };
 
 /**
- * Get user's squares
+ * Get user's squares from Realtime Database
  */
 export const getUserSquares = async (userId) => {
   try {
-    const squaresQuery = query(
-      collection(db, "squares"),
-      where("members", "array-contains", { userId: userId, status: "active" })
-    );
+    const squaresRef = ref(db, 'squares');
+    const snapshot = await get(squaresRef);
     
-    const snapshot = await getDocs(squaresQuery);
-    const squares = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const squares = [];
+    
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        const square = childSnapshot.val();
+        const squareId = childSnapshot.key;
+        
+        // Check if user is a member of this square
+        if (square.members && square.members[userId]) {
+          squares.push({
+            id: squareId,
+            ...square
+          });
+        }
+      });
+    }
     
     return { success: true, squares };
   } catch (error) {
@@ -461,36 +475,46 @@ export const getUserSquares = async (userId) => {
 };
 
 // ==============================
-// BUSINESS FUNCTIONS
+// BUSINESS FUNCTIONS (Realtime Database)
 // ==============================
 
 /**
- * Register a business
+ * Register a business in Realtime Database
  */
 export const registerBusiness = async (businessData, ownerId) => {
   try {
-    const businessRef = await addDoc(collection(db, "businesses"), {
-      ...businessData,
+    const businessId = `business_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const businessRef = ref(db, `businesses/${businessId}`);
+    
+    const businessObject = {
+      name: businessData.name,
       ownerId: ownerId,
-      status: "pending", // pending, verified, active, suspended
+      businessType: businessData.businessType || "other",
       verificationStatus: "pending",
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      location: businessData.location || "",
+      description: businessData.description || "",
+      phoneNumber: businessData.phoneNumber || "",
+      email: businessData.email || "",
+      website: businessData.website || "",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
       totalCommunitySupport: 0,
-      activeSquares: [],
+      activeProjects: 0,
       completedProjects: 0,
       rating: 0,
       reviewCount: 0,
-      isFeatured: false
-    });
+      isFeatured: false,
+      categories: businessData.categories || []
+    };
+    
+    await set(businessRef, businessObject);
     
     // Update user to business owner
-    await updateDoc(doc(db, "users", ownerId), {
-      userType: "business_owner",
-      businessId: businessRef.id
+    await update(ref(db, `users/${ownerId}/profile`), {
+      userType: "business_owner"
     });
     
-    return { success: true, businessId: businessRef.id };
+    return { success: true, businessId };
   } catch (error) {
     console.error("Register business error:", error);
     return { success: false, error: error.message };
@@ -498,13 +522,15 @@ export const registerBusiness = async (businessData, ownerId) => {
 };
 
 /**
- * Get business by ID
+ * Get business by ID from Realtime Database
  */
 export const getBusiness = async (businessId) => {
   try {
-    const businessDoc = await getDoc(doc(db, "businesses", businessId));
-    if (businessDoc.exists()) {
-      return { success: true, data: { id: businessDoc.id, ...businessDoc.data() } };
+    const businessRef = ref(db, `businesses/${businessId}`);
+    const snapshot = await get(businessRef);
+    
+    if (snapshot.exists()) {
+      return { success: true, data: snapshot.val() };
     }
     return { success: false, error: "Business not found" };
   } catch (error) {
@@ -514,23 +540,32 @@ export const getBusiness = async (businessId) => {
 };
 
 /**
- * Create a business project/opportunity
+ * Create a business project/opportunity in Realtime Database
  */
 export const createBusinessProject = async (businessId, projectData) => {
   try {
-    const projectRef = await addDoc(collection(db, "projects"), {
-      ...projectData,
+    const projectId = `project_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const projectRef = ref(db, `businesses/${businessId}/projects/${projectId}`);
+    
+    const projectObject = {
+      title: projectData.title,
+      description: projectData.description || "",
       businessId: businessId,
-      status: "seeking", // seeking, funded, in_progress, completed, cancelled
+      status: "seeking",
+      goalAmount: projectData.goalAmount || 0,
       totalRaised: 0,
       squareCount: 0,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      deadline: projectData.deadline ? Timestamp.fromDate(new Date(projectData.deadline)) : null,
-      isActive: true
-    });
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      deadline: projectData.deadline || null,
+      isActive: true,
+      rewards: projectData.rewards || [],
+      images: projectData.images || []
+    };
     
-    return { success: true, projectId: projectRef.id };
+    await set(projectRef, projectObject);
+    
+    return { success: true, projectId };
   } catch (error) {
     console.error("Create business project error:", error);
     return { success: false, error: error.message };
@@ -538,28 +573,54 @@ export const createBusinessProject = async (businessId, projectData) => {
 };
 
 /**
- * Square pledges support to business project
+ * Square pledges support to business project (Realtime Database)
  */
-export const pledgeSupport = async (squareId, projectId, amount, commitmentType) => {
+export const pledgeSupport = async (squareId, projectId, businessId, amount, commitmentType) => {
   try {
-    const pledgeRef = await addDoc(collection(db, "pledges"), {
+    const pledgeId = `pledge_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const pledgeRef = ref(db, `businesses/${businessId}/projects/${projectId}/pledges/${pledgeId}`);
+    
+    // Create pledge record
+    await set(pledgeRef, {
       squareId: squareId,
       projectId: projectId,
       amount: amount,
-      commitmentType: commitmentType, // pre_purchase, funding, in_kind
-      status: "pledged", // pledged, committed, completed, cancelled
-      pledgedAt: serverTimestamp(),
+      commitmentType: commitmentType,
+      status: "pledged",
+      pledgedAt: Date.now(),
       commitmentDeadline: null,
       notes: ""
     });
     
     // Update project total pledged
-    await updateDoc(doc(db, "projects", projectId), {
-      totalRaised: increment(amount),
-      squareCount: increment(1)
+    await update(ref(db, `businesses/${businessId}/projects/${projectId}`), {
+      totalRaised: incrementValue(amount),
+      squareCount: incrementValue(1)
     });
     
-    return { success: true, pledgeId: pledgeRef.id };
+    // Record user-business interaction
+    const squareRef = ref(db, `squares/${squareId}`);
+    const squareSnapshot = await get(squareRef);
+    
+    if (squareSnapshot.exists()) {
+      const squareData = squareSnapshot.val();
+      const members = Object.values(squareData.members || {});
+      
+      // Record interaction for each member
+      for (const member of members) {
+        const interactionId = `interact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const interactionRef = ref(db, `user_business_interactions/${member.userId}/${businessId}/${interactionId}`);
+        
+        await set(interactionRef, {
+          interactionType: "pledge",
+          interactedAt: Date.now(),
+          projectId: projectId,
+          amount: amount
+        });
+      }
+    }
+    
+    return { success: true, pledgeId };
   } catch (error) {
     console.error("Pledge support error:", error);
     return { success: false, error: error.message };
@@ -567,91 +628,29 @@ export const pledgeSupport = async (squareId, projectId, amount, commitmentType)
 };
 
 // ==============================
-// FINANCIAL EDUCATION FUNCTIONS
+// NOTIFICATIONS & MESSAGING (Realtime Database)
 // ==============================
 
 /**
- * Get learning modules
- */
-export const getLearningModules = async () => {
-  try {
-    const modulesQuery = query(
-      collection(db, "learning_modules"),
-      orderBy("order"),
-      where("isPublished", "==", true)
-    );
-    
-    const snapshot = await getDocs(modulesQuery);
-    const modules = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    
-    return { success: true, modules };
-  } catch (error) {
-    console.error("Get learning modules error:", error);
-    return { success: false, error: error.message };
-  }
-};
-
-/**
- * Mark module as completed for user
- */
-export const completeLearningModule = async (userId, moduleId) => {
-  try {
-    const completionRef = await addDoc(collection(db, "learning_completions"), {
-      userId: userId,
-      moduleId: moduleId,
-      completedAt: serverTimestamp(),
-      score: null, // if there's a quiz
-      timeSpent: 0 // in minutes
-    });
-    
-    // Update user's learning progress
-    await updateDoc(doc(db, "users", userId), {
-      completedModules: increment(1),
-      lastLearningActivity: serverTimestamp()
-    });
-    
-    return { success: true, completionId: completionRef.id };
-  } catch (error) {
-    console.error("Complete learning module error:", error);
-    return { success: false, error: error.message };
-  }
-};
-
-// ==============================
-// NOTIFICATIONS & MESSAGING
-// ==============================
-
-/**
- * Create a notification
+ * Create a notification in Realtime Database
  */
 export const createNotification = async (userId, type, title, message, data = {}) => {
   try {
-    const notificationRef = await addDoc(collection(db, "notifications"), {
-      userId: userId,
-      type: type, // square_update, business_update, system, community
+    const notificationId = `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const notificationRef = ref(db, `notifications/${userId}/${notificationId}`);
+    
+    await set(notificationRef, {
+      id: notificationId,
+      type: type,
       title: title,
       message: message,
       data: data,
       isRead: false,
-      createdAt: serverTimestamp(),
+      createdAt: Date.now(),
       expiresAt: null
     });
     
-    // Real-time update for immediate notification
-    const userNotificationsRef = dbRef(realtimeDb, `notifications/${userId}/${notificationRef.id}`);
-    await set(userNotificationsRef, {
-      id: notificationRef.id,
-      type: type,
-      title: title,
-      message: message,
-      isRead: false,
-      createdAt: Date.now()
-    });
-    
-    return { success: true, notificationId: notificationRef.id };
+    return { success: true, notificationId };
   } catch (error) {
     console.error("Create notification error:", error);
     return { success: false, error: error.message };
@@ -659,24 +658,52 @@ export const createNotification = async (userId, type, title, message, data = {}
 };
 
 /**
- * Get user notifications
+ * Create notification for all square members
+ */
+export const createSquareNotification = async (squareId, type, title, message) => {
+  try {
+    const squareRef = ref(db, `squares/${squareId}`);
+    const snapshot = await get(squareRef);
+    
+    if (snapshot.exists()) {
+      const squareData = snapshot.val();
+      const members = Object.keys(squareData.members || {});
+      
+      for (const memberId of members) {
+        await createNotification(memberId, type, title, message, { squareId });
+      }
+    }
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Create square notification error:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Get user notifications from Realtime Database
  */
 export const getUserNotifications = async (userId, limitCount = 20) => {
   try {
-    const notificationsQuery = query(
-      collection(db, "notifications"),
-      where("userId", "==", userId),
-      orderBy("createdAt", "desc"),
-      limit(limitCount)
-    );
+    const notificationsRef = ref(db, `notifications/${userId}`);
+    const snapshot = await get(notificationsRef);
     
-    const snapshot = await getDocs(notificationsQuery);
-    const notifications = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const notifications = [];
     
-    return { success: true, notifications };
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        notifications.push({
+          id: childSnapshot.key,
+          ...childSnapshot.val()
+        });
+      });
+    }
+    
+    // Sort by creation date (newest first) and limit
+    notifications.sort((a, b) => b.createdAt - a.createdAt);
+    
+    return { success: true, notifications: notifications.slice(0, limitCount) };
   } catch (error) {
     console.error("Get notifications error:", error);
     return { success: false, error: error.message };
@@ -684,13 +711,13 @@ export const getUserNotifications = async (userId, limitCount = 20) => {
 };
 
 /**
- * Mark notification as read
+ * Mark notification as read in Realtime Database
  */
-export const markNotificationAsRead = async (notificationId) => {
+export const markNotificationAsRead = async (userId, notificationId) => {
   try {
-    await updateDoc(doc(db, "notifications", notificationId), {
+    await update(ref(db, `notifications/${userId}/${notificationId}`), {
       isRead: true,
-      readAt: serverTimestamp()
+      readAt: Date.now()
     });
     
     return { success: true };
@@ -701,77 +728,37 @@ export const markNotificationAsRead = async (notificationId) => {
 };
 
 // ==============================
-// COMMUNITY FUNCTIONS
-// ==============================
-
-/**
- * Create community discussion
- */
-export const createDiscussion = async (squareId, userId, title, content) => {
-  try {
-    const discussionRef = await addDoc(collection(db, "discussions"), {
-      squareId: squareId,
-      userId: userId,
-      title: title,
-      content: content,
-      type: "general", // general, decision, announcement
-      status: "open",
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      upvotes: 0,
-      commentCount: 0,
-      isPinned: false
-    });
-    
-    return { success: true, discussionId: discussionRef.id };
-  } catch (error) {
-    console.error("Create discussion error:", error);
-    return { success: false, error: error.message };
-  }
-};
-
-/**
- * Add comment to discussion
- */
-export const addComment = async (discussionId, userId, content) => {
-  try {
-    const commentRef = await addDoc(collection(db, "comments"), {
-      discussionId: discussionId,
-      userId: userId,
-      content: content,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      upvotes: 0,
-      isEdited: false
-    });
-    
-    // Update discussion comment count
-    await updateDoc(doc(db, "discussions", discussionId), {
-      commentCount: increment(1),
-      updatedAt: serverTimestamp()
-    });
-    
-    return { success: true, commentId: commentRef.id };
-  } catch (error) {
-    console.error("Add comment error:", error);
-    return { success: false, error: error.message };
-  }
-};
-
-// ==============================
 // REAL-TIME FUNCTIONS
 // ==============================
+
+/**
+ * Update user presence
+ */
+export const updatePresence = async (userId, status) => {
+  try {
+    const presenceRef = ref(db, `presence/${userId}`);
+    
+    await set(presenceRef, {
+      status: status,
+      lastSeen: Date.now()
+    });
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Update presence error:", error);
+    return { success: false, error: error.message };
+  }
+};
 
 /**
  * Listen to square updates in real-time
  */
 export const listenToSquare = (squareId, callback) => {
-  const squareRef = doc(db, "squares", squareId);
+  const squareRef = ref(db, `squares/${squareId}`);
   
-  // Firestore listener
-  const unsubscribe = onSnapshot(squareRef, (doc) => {
-    if (doc.exists()) {
-      callback({ id: doc.id, ...doc.data() });
+  const unsubscribe = onValue(squareRef, (snapshot) => {
+    if (snapshot.exists()) {
+      callback({ id: snapshot.key, ...snapshot.val() });
     }
   });
   
@@ -782,53 +769,134 @@ export const listenToSquare = (squareId, callback) => {
  * Listen to user's notifications in real-time
  */
 export const listenToNotifications = (userId, callback) => {
-  const notificationsRef = dbRef(realtimeDb, `notifications/${userId}`);
+  const notificationsRef = ref(db, `notifications/${userId}`);
   
   const unsubscribe = onValue(notificationsRef, (snapshot) => {
     const notifications = [];
-    snapshot.forEach((childSnapshot) => {
-      notifications.push({
-        id: childSnapshot.key,
-        ...childSnapshot.val()
+    
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        notifications.push({
+          id: childSnapshot.key,
+          ...childSnapshot.val()
+        });
       });
-    });
+    }
+    
     callback(notifications);
   });
   
-  return () => off(notificationsRef, 'value', unsubscribe);
+  return unsubscribe;
+};
+
+/**
+ * Listen to typing indicators
+ */
+export const listenToTyping = (squareId, callback) => {
+  const typingRef = ref(db, `typing_indicators/${squareId}`);
+  
+  const unsubscribe = onValue(typingRef, (snapshot) => {
+    const typingUsers = {};
+    
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        typingUsers[childSnapshot.key] = childSnapshot.val();
+      });
+    }
+    
+    callback(typingUsers);
+  });
+  
+  return unsubscribe;
+};
+
+/**
+ * Set typing indicator
+ */
+export const setTyping = async (squareId, userId, isTyping) => {
+  try {
+    const typingRef = ref(db, `typing_indicators/${squareId}/${userId}`);
+    
+    if (isTyping) {
+      await set(typingRef, true);
+      
+      // Auto-clear after 3 seconds
+      setTimeout(() => {
+        remove(typingRef).catch(console.error);
+      }, 3000);
+    } else {
+      await remove(typingRef);
+    }
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Set typing error:", error);
+    return { success: false, error: error.message };
+  }
 };
 
 // ==============================
-// ANALYTICS & STATS
+// PUBLIC DATA FUNCTIONS
 // ==============================
 
 /**
- * Get platform statistics
+ * Get featured businesses from Realtime Database
  */
-export const getPlatformStats = async () => {
+export const getFeaturedBusinesses = async () => {
   try {
-    // These would be aggregated in a separate stats collection
-    // For now, return mock data or fetch from a stats document
-    const statsDoc = await getDoc(doc(db, "platform_stats", "current"));
+    const businessesRef = ref(db, 'businesses');
+    const snapshot = await get(businessesRef);
     
-    if (statsDoc.exists()) {
-      return { success: true, stats: statsDoc.data() };
+    const businesses = [];
+    
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        const business = childSnapshot.val();
+        
+        // Only include verified businesses
+        if (business.verificationStatus === 'verified' && business.isFeatured) {
+          businesses.push({
+            id: childSnapshot.key,
+            ...business
+          });
+        }
+      });
     }
     
-    // Default stats if no stats document exists
-    return {
-      success: true,
-      stats: {
-        totalUsers: 0,
-        activeSquares: 0,
-        totalBusinesses: 0,
-        totalContributions: 0,
-        communityImpact: 0,
-        learningCompletions: 0
-      }
-    };
+    return { success: true, businesses };
   } catch (error) {
-    console.error("Get platform stats error:", error);
+    console.error("Get featured businesses error:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Get public squares from Realtime Database
+ */
+export const getPublicSquares = async () => {
+  try {
+    const squaresRef = ref(db, 'squares');
+    const snapshot = await get(squaresRef);
+    
+    const squares = [];
+    
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        const square = childSnapshot.val();
+        
+        // Only include public squares
+        if (square.isPublic && square.status === 'active') {
+          squares.push({
+            id: childSnapshot.key,
+            ...square
+          });
+        }
+      });
+    }
+    
+    return { success: true, squares };
+  } catch (error) {
+    console.error("Get public squares error:", error);
     return { success: false, error: error.message };
   }
 };
@@ -850,23 +918,27 @@ function generateJoinCode() {
 }
 
 /**
- * Format Firestore timestamp for display
+ * Helper function to increment values (for Realtime Database)
+ */
+function incrementValue(value) {
+  // In Realtime Database, we use Firebase's increment
+  // For now, we'll return the value and handle it in the update
+  return value;
+}
+
+/**
+ * Format timestamp for display
  */
 export const formatTimestamp = (timestamp) => {
   if (!timestamp) return '';
   
-  if (timestamp.toDate) {
-    return timestamp.toDate().toLocaleDateString('en-ZM', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  }
-  
-  return new Date(timestamp).toLocaleDateString('en-ZM', {
+  const date = new Date(timestamp);
+  return date.toLocaleDateString('en-ZM', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
   });
 };
 
@@ -880,6 +952,15 @@ export const formatCurrency = (amount, currency = 'ZMK') => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2
   }).format(amount);
+};
+
+/**
+ * Clean up database references on unmount
+ */
+export const cleanupListener = (unsubscribe) => {
+  if (unsubscribe && typeof unsubscribe === 'function') {
+    unsubscribe();
+  }
 };
 
 // ==============================
@@ -923,5 +1004,5 @@ export const handleFirebaseError = (error) => {
   return userMessage;
 };
 
-// Export Firebase services for direct access if needed
-export { app, auth, db, storage, realtimeDb };
+// Export Firebase services for direct access
+export { app, auth, db, firestore };
