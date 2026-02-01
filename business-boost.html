@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bridges to Business | Tulo Square</title>
+
+  <style>
+    :root {
+      --tzf-bg-dark: #0a1f1c;
+      --tzf-orange-main: #d35400;
+      --tzf-orange-light: #e67e22;
+      --tzf-accent-blue: #3498db;
+      --tzf-text-muted: #8fa7a3;
+      --tzf-white: #ffffff;
+      --tzf-success: #2ecc71;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+    }
+
+    body {
+      background: linear-gradient(160deg, var(--tzf-bg-dark), #06201c);
+      color: var(--tzf-white);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    header {
+      padding: 22px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.2em;
+      color: var(--tzf-orange-main);
+    }
+
+    nav a {
+      margin-left: 26px;
+      opacity: .9;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--tzf-orange-main);
+    }
+
+    .btn-primary {
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--tzf-orange-light), var(--tzf-orange-main));
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: auto;
+      padding: 60px 20px 90px;
+    }
+
+    .center { text-align: center; }
+
+    /* HERO */
+    .hero h1 {
+      font-size: 2.7rem;
+      color: var(--tzf-orange-main);
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: auto;
+      color: var(--tzf-text-muted);
+      font-size: 1.05rem;
+    }
+
+    .bridge-tagline {
+      font-size: 1.3rem;
+      color: var(--tzf-accent-blue);
+      margin: 20px 0;
+      font-style: italic;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin: 40px 0;
+      flex-wrap: wrap;
+    }
+
+    .stats strong {
+      font-size: 28px;
+      color: var(--tzf-orange-main);
+    }
+
+    /* GLASS CARD GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      margin-top: 50px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 18px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(6px);
+      transition: all .35s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: var(--tzf-orange-main);
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+    }
+
+    .card h3 {
+      margin-bottom: 12px;
+      color: var(--tzf-orange-main);
+    }
+
+    .card p {
+      color: var(--tzf-text-muted);
+      font-size: .95rem;
+    }
+
+    /* BUSINESS CARDS */
+    .biz-header {
+      background: linear-gradient(135deg, var(--tzf-orange-light), var(--tzf-orange-main));
+      padding: 18px;
+      border-radius: 14px 14px 0 0;
+    }
+
+    .biz-body {
+      padding: 22px;
+    }
+
+    .progress {
+      height: 8px;
+      background: rgba(255,255,255,.15);
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      background: var(--tzf-success);
+    }
+
+    .biz-stats {
+      display: flex;
+      justify-content: space-between;
+      margin: 15px 0;
+      font-size: 0.9em;
+    }
+
+    .community-supported {
+      background: rgba(52, 152, 219, 0.1);
+      border-left: 4px solid var(--tzf-accent-blue);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-size: 0.9em;
+    }
+
+    .cta-box {
+      background: rgba(255,255,255,0.06);
+      border-radius: 22px;
+      padding: 50px;
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(6px);
+      margin-top: 70px;
+    }
+
+    /* Bridge Visualization */
+    .bridge-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 30px 0;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .bridge-node {
+      background: rgba(0,0,0,0.3);
+      border: 2px solid var(--tzf-orange-main);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      min-width: 150px;
+    }
+
+    .bridge-connector {
+      font-size: 2.5em;
+      color: var(--tzf-accent-blue);
+    }
+
+    /* How It Works Steps */
+    .step-card {
+      text-align: center;
+      padding: 25px;
+    }
+
+    .step-number {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      background: var(--tzf-orange-main);
+      color: white;
+      border-radius: 50%;
+      line-height: 40px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    /* Pill Badges */
+    .pill {
+      display: inline-block;
+      background: rgba(211, 84, 0, 0.2);
+      color: var(--tzf-orange-main);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      margin: 5px;
+      border: 1px solid rgba(211, 84, 0, 0.4);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--tzf-text-muted);
+      font-size: .9rem;
+      background: rgba(0,0,0,0.3);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .disclaimer-box {
+      background: rgba(255, 193, 7, 0.1);
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px auto;
+      max-width: 800px;
+      font-size: 0.85em;
+    }
+
+    @media(max-width:600px){
+      .hero h1 { font-size: 2.2rem; }
+      header { padding: 15px 20px; flex-direction: column; gap: 15px; }
+      nav { display: flex; gap: 15px; margin-top: 10px; }
+      nav a { margin-left: 0; }
+      .stats { gap: 30px; }
+      .stats strong { font-size: 24px; }
+      .cta-box { padding: 30px 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <div>🌉 Tulo Square</div>
+    <div style="font-size: 0.8em; color: var(--tzf-text-muted);">Bridges to Business</div>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="business-boost.html">Business Bridges</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="register.html" class="btn-primary">Join Waitlist</a>
+  </nav>
+</header>
+
+<section class="page hero center">
+  <h1>Build Bridges to Zambian Businesses</h1>
+  <p class="bridge-tagline">Where community savings meet local opportunity</p>
+  
+  <div class="bridge-visual">
+    <div class="bridge-node">
+      <strong>Community Savings</strong>
+      <p>Circles pooling funds</p>
+    </div>
+    <div class="bridge-connector">🌉</div>
+    <div class="bridge-node">
+      <strong>Local Businesses</strong>
+      <p>Verified opportunities</p>
+    </div>
+  </div>
+
+  <p>
+    Connect your savings circle with vetted local businesses. Support growth through pre-purchases, 
+    group funding, or community commitments — while keeping money in your community.
+  </p>
+
+  <div class="stats">
+    <div><strong>23</strong><p>Businesses Supported</p></div>
+    <div><strong>312</strong><p>Community Members</p></div>
+    <div><strong>ZMK 425K</strong><p>In Community Squares</p></div>
+  </div>
+
+  <a href="#opportunities" class="btn-primary">Browse Business Bridges</a>
+</section>
+
+<section class="page center">
+  <h2>How Business Bridges Work</h2>
+  <p style="max-width: 800px; margin: 0 auto 30px; color: var(--tzf-text-muted);">
+    Tulo Square connects community savings circles with verified local businesses. 
+    Communities support growth, businesses get capital, everyone builds stronger local economies.
+  </p>
+
+  <div class="grid">
+    <div class="card step-card">
+      <div class="step-number">1</div>
+      <h3>Business Gets Verified</h3>
+      <p>Local businesses apply and get verified by our community team.</p>
+      <div class="pill">Transparent</div>
+    </div>
+    
+    <div class="card step-card">
+      <div class="step-number">2</div>
+      <h3>Community Connects</h3>
+      <p>Savings circles browse and choose businesses to support.</p>
+      <div class="pill">Community Choice</div>
+    </div>
+    
+    <div class="card step-card">
+      <div class="step-number">3</div>
+      <h3>Support is Pledged</h3>
+      <p>Circles commit funds through pre-purchases or group funding.</p>
+      <div class="pill">Direct Support</div>
+    </div>
+    
+    <div class="card step-card">
+      <div class="step-number">4</div>
+      <h3>Growth is Tracked</h3>
+      <p>Communities see their impact, businesses report on growth.</p>
+      <div class="pill">Transparent Tracking</div>
+    </div>
+  </div>
+
+  <div class="disclaimer-box">
+    <p><strong>⚠️ Important:</strong> Tulo Square facilitates connections between communities and businesses. 
+    All financial transactions occur directly between community members and businesses via mobile money or bank transfers. 
+    We are not an investment platform and do not offer guaranteed returns.</p>
+  </div>
+</section>
+
+<section id="opportunities" class="page center">
+  <h2>Current Business Bridges</h2>
+  <p style="color: var(--tzf-text-muted); margin-bottom: 30px;">
+    Verified businesses seeking community support
+  </p>
+
+  <div class="grid">
+    <div class="card">
+      <div class="biz-header">
+        <strong>Mama Grace's Catering</strong><br>
+        <small>Lusaka • School Meals Supplier</small>
+      </div>
+      <div class="biz-body">
+        <p>Supplying meals to 3 local schools. Seeking support for kitchen expansion.</p>
+        
+        <div class="community-supported">
+          <strong>Community Support:</strong> 2 Squares have pledged support
+        </div>
+        
+        <div class="progress">
+          <span style="width:70%"></span>
+        </div>
+        
+        <div class="biz-stats">
+          <div>
+            <small>Goal</small><br>
+            <strong>ZMK 15,000</strong>
+          </div>
+          <div>
+            <small>Raised</small><br>
+            <strong>ZMK 10,500</strong>
+          </div>
+          <div>
+            <small>Squares</small><br>
+            <strong>2/5</strong>
+          </div>
+        </div>
+        
+        <p style="font-size: 0.9em; color: var(--tzf-success); margin: 10px 0;">
+          <strong>Community Reward:</strong> 10% discount for supporting squares
+        </p>
+        
+        <button class="btn-primary" onclick="viewBusiness('grace')">Learn More & Connect</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="biz-header">
+        <strong>Kitwe Youth Carpentry</strong><br>
+        <small>Kitwe • Furniture & Crafts</small>
+      </div>
+      <div class="biz-body">
+        <p>Young artisans seeking tools and workshop space. Creating local jobs.</p>
+        
+        <div class="community-supported">
+          <strong>Community Support:</strong> 4 Squares interested
+        </div>
+        
+        <div class="progress">
+          <span style="width:45%"></span>
+        </div>
+        
+        <div class="biz-stats">
+          <div>
+            <small>Goal</small><br>
+            <strong>ZMK 25,000</strong>
+          </div>
+          <div>
+            <small>Raised</small><br>
+            <strong>ZMK 11,250</strong>
+          </div>
+          <div>
+            <small>Squares</small><br>
+            <strong>1/8</strong>
+          </div>
+        </div>
+        
+        <p style="font-size: 0.9em; color: var(--tzf-success); margin: 10px 0;">
+          <strong>Community Reward:</strong> First choice on custom pieces
+        </p>
+        
+        <button class="btn-primary" onclick="viewBusiness('kitwe')">Learn More & Connect</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="biz-header">
+        <strong>Ndola Tailoring Collective</strong><br>
+        <small>Ndola • Clothing & Uniforms</small>
+      </div>
+      <div class="biz-body">
+        <p>Women-led tailoring group seeking sewing machines and fabric.</p>
+        
+        <div class="community-supported">
+          <strong>Community Support:</strong> New bridge - be first to connect!
+        </div>
+        
+        <div class="progress">
+          <span style="width:25%"></span>
+        </div>
+        
+        <div class="biz-stats">
+          <div>
+            <small>Goal</small><br>
+            <strong>ZMK 20,000</strong>
+          </div>
+          <div>
+            <small>Raised</small><br>
+            <strong>ZMK 5,000</strong>
+          </div>
+          <div>
+            <small>Squares</small><br>
+            <strong>0/6</strong>
+          </div>
+        </div>
+        
+        <p style="font-size: 0.9em; color: var(--tzf-success); margin: 10px 0;">
+          <strong>Community Reward:</strong> Custom uniforms for member groups
+        </p>
+        
+        <button class="btn-primary" onclick="viewBusiness('ndola')">Learn More & Connect</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page center">
+  <div class="cta-box">
+    <h2>Are You a Business Seeking Community Support?</h2>
+    <p>
+      Connect with Zambian communities who want to see local businesses thrive.
+      Get verified and build bridges with savings circles in your area.
+    </p>
+    
+    <div class="bridge-visual" style="margin: 30px 0;">
+      <div class="bridge-node" style="border-color: var(--tzf-success);">
+        <strong>Your Business</strong>
+        <p>Local, verified, growing</p>
+      </div>
+      <div class="bridge-connector">🌉</div>
+      <div class="bridge-node" style="border-color: var(--tzf-accent-blue);">
+        <strong>Community Squares</strong>
+        <p>Ready to support</p>
+      </div>
+    </div>
+    
+    <br>
+    <a href="business-apply.html" class="btn-primary">Apply as a Business</a>
+    <p style="margin-top: 15px; font-size: 0.9em; color: var(--tzf-text-muted);">
+      Free verification • Community-focused • No middlemen
+    </p>
+  </div>
+</section>
+
+<section class="page center">
+  <h2>Success Stories</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Chanda's Grocery Expansion</h3>
+      <p>"3 community squares supported my expansion. Now I supply 5 schools and hired 2 more people."</p>
+      <div class="pill">+200% Growth</div>
+      <div class="pill">2 Jobs Created</div>
+    </div>
+    
+    <div class="card">
+      <h3>Kabwe Youth Tech Hub</h3>
+      <p>"7 squares funded our computer lab. Now we train 30 youth monthly in digital skills."</p>
+      <div class="pill">Community Funded</div>
+      <div class="pill">Skills Development</div>
+    </div>
+    
+    <div class="card">
+      <h3>Mansa Farmers Collective</h3>
+      <p>"Pre-purchases from 4 squares helped us buy better seeds. Yield increased by 40%."</p>
+      <div class="pill">Pre-Sale Model</div>
+      <div class="pill">+40% Yield</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="disclaimer-box">
+    <p><strong>Transparency Notice:</strong> Tulo Square is a community coordination platform, not a financial institution. 
+    We connect community savings circles with verified local businesses. All financial transactions occur directly between 
+    community members and businesses. We do not offer investments, guaranteed returns, or financial advice.</p>
+  </div>
+  
+  <p>© 2025 Tulo Square • Your digital village square, bridging savings and opportunity</p>
+  <p style="margin-top: 10px; font-size: 0.8em;">
+    <a href="index.html">Home</a> | 
+    <a href="how-it-works.html">How It Works</a> | 
+    <a href="dashboard.html">Dashboard</a> | 
+    <a href="contact.html">Contact</a>
+  </p>
+</footer>
+
+<script>
+  function viewBusiness(businessId) {
+    // In a real implementation, this would navigate to a business detail page
+    alert('In the full platform, this would show details for business: ' + businessId + 
+          '\n\nYou would see:\n• Full business story\n• Community commitments\n• Impact reports\n• How to connect your Square');
+    
+    // For demo purposes, simulate navigation
+    // window.location.href = 'business-details.html?id=' + businessId;
+  }
+
+  // Add some interactivity to the business cards
+  document.addEventListener('DOMContentLoaded', function() {
+    const businessCards = document.querySelectorAll('.card .btn-primary');
+    businessCards.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        // Animation feedback
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          this.style.transform = '';
+        }, 200);
+      });
+    });
+    
+    // Add FontAwesome for icons
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+    document.head.appendChild(link);
+  });
+</script>
+
+</body>
+</html>
