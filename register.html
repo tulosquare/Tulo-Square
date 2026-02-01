@@ -16,6 +16,7 @@
       --tzf-white: #ffffff;
       --tzf-success: #2ecc71;
       --tzf-error: #e74c3c;
+      --tzf-warning: #f39c12;
     }
 
     * {
@@ -149,6 +150,10 @@
       font-size: 0.95rem;
     }
 
+    .input-label span {
+      color: var(--tzf-warning);
+    }
+
     .input {
       width: 100%;
       padding: 14px 18px;
@@ -166,6 +171,14 @@
       box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.2);
     }
 
+    .input.valid {
+      border-color: var(--tzf-success);
+    }
+
+    .input.invalid {
+      border-color: var(--tzf-error);
+    }
+
     .password-wrap {
       position: relative;
     }
@@ -178,10 +191,36 @@
       cursor: pointer;
       color: var(--tzf-text-muted);
       font-size: 1.2rem;
+      background: none;
+      border: none;
+      padding: 5px;
     }
 
     .toggle-eye:hover {
       color: var(--tzf-orange-main);
+    }
+
+    /* PASSWORD STRENGTH */
+    .password-strength {
+      margin-top: 8px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .strength-meter {
+      height: 100%;
+      width: 0%;
+      border-radius: 2px;
+      transition: width 0.3s, background-color 0.3s;
+    }
+
+    .strength-label {
+      font-size: 0.8rem;
+      margin-top: 5px;
+      text-align: right;
+      color: var(--tzf-text-muted);
     }
 
     /* BUTTON */
@@ -283,6 +322,30 @@
       text-align: center;
     }
 
+    /* LOADING DOTS */
+    .loading-dots {
+      display: inline-block;
+    }
+
+    .loading-dots span {
+      animation: loading 1.5s infinite;
+      opacity: 0;
+    }
+
+    .loading-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loading-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes loading {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
     /* RESPONSIVE */
     @media (max-width: 600px) {
       .auth-hero h1 {
@@ -358,41 +421,61 @@
     </div>
 
     <div class="input-group">
-      <label class="input-label">Full Name</label>
+      <label class="input-label">Full Name <span>*</span></label>
       <input class="input" id="name" placeholder="e.g. Chanda Banda" required />
     </div>
 
     <div class="input-group">
-      <label class="input-label">Email Address</label>
+      <label class="input-label">Email Address <span>*</span></label>
       <input class="input" id="email" type="email" placeholder="your.email@example.com" required />
     </div>
 
     <div class="input-group">
-      <label class="input-label">Phone Number (for community contact)</label>
+      <label class="input-label">Phone Number (for community contact) <span>*</span></label>
       <div class="phone-input">
         <div class="phone-prefix">+260</div>
         <input class="input" id="phone" placeholder="97 123 4567" type="tel" required />
       </div>
+      <small style="color: var(--tzf-text-muted); margin-top: 5px; display: block;">
+        Format: 97 123 4567 (without spaces will be added automatically)
+      </small>
     </div>
 
     <div class="input-group">
-      <label class="input-label">Create Password</label>
+      <label class="input-label">Create Password <span>*</span></label>
       <div class="password-wrap">
         <input class="input" id="password" type="password" placeholder="Minimum 6 characters" required />
-        <span class="toggle-eye" onclick="togglePassword('password')">
+        <button type="button" class="toggle-eye" onclick="togglePassword('password')">
           <i class="fas fa-eye"></i>
-        </span>
+        </button>
+      </div>
+      
+      <!-- Password Strength Meter -->
+      <div class="password-strength">
+        <div class="strength-meter" id="strengthMeter"></div>
+      </div>
+      <div class="strength-label" id="strengthLabel">Strength: Weak</div>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Confirm Password <span>*</span></label>
+      <div class="password-wrap">
+        <input class="input" id="confirmPassword" type="password" placeholder="Re-enter your password" required />
+        <button type="button" class="toggle-eye" onclick="togglePassword('confirmPassword')">
+          <i class="fas fa-eye"></i>
+        </button>
       </div>
     </div>
 
     <div class="input-group">
-      <label class="input-label">How did you hear about us?</label>
-      <select class="input" id="referralSource">
+      <label class="input-label">How did you hear about us? <span>*</span></label>
+      <select class="input" id="referralSource" required>
         <option value="">Select one...</option>
         <option value="friend">Friend or Family</option>
         <option value="church">Church/Community Group</option>
         <option value="social">Social Media</option>
         <option value="search">Online Search</option>
+        <option value="event">Community Event</option>
         <option value="other">Other</option>
       </select>
     </div>
@@ -400,6 +483,17 @@
     <div class="input-group">
       <label class="input-label">Referral Code (optional)</label>
       <input class="input" id="referralCode" placeholder="If a member referred you" />
+    </div>
+
+    <div class="input-group">
+      <div style="display: flex; align-items: flex-start; gap: 10px;">
+        <input type="checkbox" id="terms" style="margin-top: 3px;" required />
+        <label for="terms" style="color: var(--tzf-text-muted); font-size: 0.9rem;">
+          I agree to the <a href="terms.html" style="color: var(--tzf-orange-main);">Terms of Service</a> 
+          and <a href="privacy.html" style="color: var(--tzf-orange-main);">Privacy Policy</a>. 
+          I understand Tulo Square is not a bank or investment platform.
+        </label>
+      </div>
     </div>
 
     <div id="signupError" class="error-text"></div>
@@ -428,7 +522,7 @@
   // Password toggle function
   function togglePassword(id) {
     const input = document.getElementById(id);
-    const eyeIcon = input.parentElement.querySelector('.fa-eye');
+    const eyeIcon = input.parentElement.querySelector('.fa-eye, .fa-eye-slash');
     if (input.type === "password") {
       input.type = "text";
       eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -456,7 +550,6 @@
       phoneInput.addEventListener('input', function(e) {
         let value = e.target.value.replace(/\D/g, '');
         if (value.length > 0) {
-          // Format as XXX XXX XXXX
           if (value.length <= 3) {
             value = value;
           } else if (value.length <= 6) {
@@ -468,42 +561,127 @@
         e.target.value = value;
       });
     }
+
+    // Password strength checker
+    const passwordInput = document.getElementById('password');
+    if (passwordInput) {
+      passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        const meter = document.getElementById('strengthMeter');
+        const label = document.getElementById('strengthLabel');
+        
+        if (!password) {
+          meter.style.width = '0%';
+          label.textContent = 'Strength: None';
+          label.style.color = 'var(--tzf-text-muted)';
+          return;
+        }
+        
+        let strength = 0;
+        const requirements = {
+          length: password.length >= 6,
+          lowercase: /[a-z]/.test(password),
+          uppercase: /[A-Z]/.test(password),
+          number: /[0-9]/.test(password),
+          special: /[^A-Za-z0-9]/.test(password)
+        };
+        
+        Object.values(requirements).forEach(req => {
+          if (req) strength += 20;
+        });
+        
+        meter.style.width = strength + '%';
+        
+        if (strength < 40) {
+          meter.style.backgroundColor = 'var(--tzf-error)';
+          label.textContent = 'Strength: Weak';
+          label.style.color = 'var(--tzf-error)';
+        } else if (strength < 70) {
+          meter.style.backgroundColor = 'var(--tzf-warning)';
+          label.textContent = 'Strength: Fair';
+          label.style.color = 'var(--tzf-warning)';
+        } else if (strength < 90) {
+          meter.style.backgroundColor = 'var(--tzf-accent-blue)';
+          label.textContent = 'Strength: Good';
+          label.style.color = 'var(--tzf-accent-blue)';
+        } else {
+          meter.style.backgroundColor = 'var(--tzf-success)';
+          label.textContent = 'Strength: Strong';
+          label.style.color = 'var(--tzf-success)';
+        }
+      });
+    }
+
+    // Password match checker
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    if (confirmPasswordInput && passwordInput) {
+      confirmPasswordInput.addEventListener('input', function() {
+        if (this.value && passwordInput.value !== this.value) {
+          this.classList.add('invalid');
+          this.classList.remove('valid');
+        } else if (this.value) {
+          this.classList.add('valid');
+          this.classList.remove('invalid');
+        } else {
+          this.classList.remove('valid', 'invalid');
+        }
+      });
+    }
   });
 </script>
 
-<!-- Import your firebase.js module -->
+<!-- Firebase Registration Script -->
 <script type="module">
-  // Import the registerUser function from your firebase.js
-  import { registerUser } from "./firebase.js";
+  import { auth, db } from "./firebase.js";
+  import { 
+    createUserWithEmailAndPassword, 
+    updateProfile 
+  } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+  import { 
+    ref, 
+    set 
+  } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-  // Wait for DOM to load
   document.addEventListener('DOMContentLoaded', function() {
     const signupForm = document.getElementById('signupForm');
     const signupBtn = document.getElementById('signupBtn');
     const errorDiv = document.getElementById('signupError');
     const successDiv = document.getElementById('signupSuccess');
+    const termsCheckbox = document.getElementById('terms');
     
     if (!signupForm) return;
     
     signupForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       
+      // Check terms agreement
+      if (!termsCheckbox.checked) {
+        showError('You must agree to the Terms of Service and Privacy Policy');
+        return;
+      }
+      
       // Get form values
       const name = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value.trim();
       const phone = document.getElementById('phone').value.trim();
       const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
       const referralSource = document.getElementById('referralSource').value;
       const referralCode = document.getElementById('referralCode').value.trim();
       
       // Basic validation
-      if (!name || !email || !phone || !password) {
+      if (!name || !email || !phone || !password || !confirmPassword || !referralSource) {
         showError('Please fill in all required fields');
         return;
       }
       
       if (password.length < 6) {
-        showError('Password must be at least 6 characters');
+        showError('Password must be at least 6 characters long');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        showError('Passwords do not match');
         return;
       }
       
@@ -521,64 +699,149 @@
         return;
       }
       
+      // Validate name length
+      if (name.length < 2 || name.length > 50) {
+        showError('Name must be between 2 and 50 characters');
+        return;
+      }
+      
       // Disable button and show loading
       signupBtn.disabled = true;
-      signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+      signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>';
       
       try {
-        // Prepare user data in the format your registerUser expects
+        console.log('Starting registration process...');
+        
+        // 1. Create user in Firebase Authentication
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log('Firebase Auth user created:', user.uid);
+        
+        // 2. Update profile with display name
+        await updateProfile(user, {
+          displayName: name
+        });
+        console.log('User profile updated');
+        
+        // 3. Generate Tulo Square referral code
+        const myReferralCode = "TULO" + Math.floor(100000 + Math.random() * 900000);
+        
+        // 4. Format phone number
+        const fullPhone = '+260' + phoneDigits;
+        
+        // 5. Create user data structure matching Firebase rules
         const userData = {
-          displayName: name,
-          phoneNumber: '+260' + phoneDigits,
-          // Include other fields from your form
-          referralSource: referralSource,
-          referredBy: referralCode || null,
-          userType: "community_member", // Default for Tulo Square
-          location: "", // You might want to add this field to your form
-          communityBio: "" // You might want to add this field to your form
+          profile: {
+            uid: user.uid,
+            email: email,
+            displayName: name,
+            phoneNumber: fullPhone,
+            userType: "community_member",
+            communityRole: "member",
+            kycStatus: "pending",
+            location: "",
+            communityBio: "",
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            lastLogin: Date.now()
+          },
+          preferences: {
+            notifications: true,
+            language: "en",
+            privacy: "public"
+          },
+          referral: {
+            myCode: myReferralCode,
+            referralSource: referralSource,
+            referredBy: referralCode || null
+          },
+          squares: 0,
+          role: "user"
         };
         
-        // Use the registerUser function from your firebase.js
-        const result = await registerUser(email, password, userData);
+        console.log('Attempting to write to Realtime Database...');
+        console.log('Path: users/' + user.uid);
+        console.log('Data structure:', userData);
         
-        if (result.success) {
-          // Show success message
-          showSuccess('Account created successfully! Welcome to Tulo Square.');
-          
-          // Store referral code if provided (in addition to what registerUser does)
-          if (referralCode && result.user) {
-            // You might want to enhance your registerUser function to handle this
-            // or call a separate function to record referrals
-            console.log('Referral recorded:', referralCode, 'for user:', result.user.uid);
+        // 6. Save to Realtime Database
+        await set(ref(db, 'users/' + user.uid), userData);
+        console.log('User data written to Realtime Database');
+        
+        // 7. If there's a referral code, log it separately
+        if (referralCode) {
+          try {
+            const referralLog = {
+              referrerCode: referralCode,
+              newUserId: user.uid,
+              newUserEmail: email,
+              newUserName: name,
+              timestamp: Date.now()
+            };
+            await set(ref(db, 'referralLogs/' + referralCode + '_' + user.uid), referralLog);
+            console.log('Referral logged');
+          } catch (referralError) {
+            console.warn('Could not log referral:', referralError);
+            // Continue anyway - referral logging is not critical
           }
-          
-          // Redirect to dashboard after 2 seconds
-          setTimeout(() => {
-            window.location.href = 'dashboard.html';
-          }, 2000);
-        } else {
-          // Handle registration error
-          throw new Error(result.error);
         }
+        
+        // 8. Show success message
+        showSuccess('Account created successfully! Welcome to Tulo Square. Redirecting to dashboard...');
+        
+        // 9. Send email verification (optional)
+        try {
+          // Uncomment if you want to send verification email
+          // await sendEmailVerification(user);
+          // console.log('Verification email sent');
+        } catch (verificationError) {
+          console.warn('Could not send verification email:', verificationError);
+        }
+        
+        // 10. Redirect to dashboard after 2 seconds
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 2000);
         
       } catch (error) {
         // Handle errors
+        console.error('Registration error:', error);
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        
         signupBtn.disabled = false;
         signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Join Tulo Square';
         
         let errorMessage = 'Error creating account. ';
         
-        // Check for specific Firebase errors
-        if (error.message.includes('email-already-in-use')) {
-          errorMessage += 'This email is already registered.';
-        } else if (error.message.includes('invalid-email')) {
-          errorMessage += 'Invalid email address.';
-        } else if (error.message.includes('weak-password')) {
-          errorMessage += 'Password is too weak. Please use at least 6 characters.';
-        } else if (error.message.includes('network-request-failed')) {
-          errorMessage += 'Network error. Please check your internet connection.';
-        } else {
-          errorMessage += error.message;
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            errorMessage = 'This email is already registered. Please use a different email or try logging in.';
+            break;
+          case 'auth/invalid-email':
+            errorMessage = 'Invalid email address. Please check your email format.';
+            break;
+          case 'auth/weak-password':
+            errorMessage = 'Password is too weak. Please use at least 6 characters with a mix of letters and numbers.';
+            break;
+          case 'auth/operation-not-allowed':
+            errorMessage = 'Email/password sign-up is currently disabled. Please contact support.';
+            break;
+          case 'auth/network-request-failed':
+            errorMessage = 'Network error. Please check your internet connection and try again.';
+            break;
+          case 'PERMISSION_DENIED':
+          case 'permission_denied':
+            errorMessage = 'Permission denied. This might be a database rules issue. Please contact support.';
+            break;
+          case 'database/permission-denied':
+            errorMessage = 'Database permission denied. Please try again or contact support.';
+            break;
+          default:
+            if (error.message.includes('permission')) {
+              errorMessage = 'Database permission error. This might be due to security rules. Error: ' + error.message;
+            } else {
+              errorMessage += error.message.replace('Firebase: ', '').replace('auth/', '');
+            }
         }
         
         showError(errorMessage);
@@ -591,10 +854,10 @@
         errorDiv.style.display = 'block';
         if (successDiv) successDiv.style.display = 'none';
         
-        // Auto-hide error after 8 seconds
+        // Auto-hide error after 10 seconds
         setTimeout(() => {
           errorDiv.style.display = 'none';
-        }, 8000);
+        }, 10000);
       }
     }
     
