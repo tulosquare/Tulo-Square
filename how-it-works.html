@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>How Tulo Square Works - Your Digital Village Square</title>
+<style>
+:root {
+  --dark-green: #0f2f26;
+  --card-green: #143d32;
+  --accent-orange: #d35400;
+  --text-white: #ffffff;
+  --muted-white: #e6f0eb;
+  --bridge-blue: #3498db;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--dark-green);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  color: var(--text-white);
+  line-height: 1.75;
+  font-size: 18px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 4rem 2rem;
+}
+
+h1 {
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+  color: var(--accent-orange);
+  text-align: center;
+}
+
+h2 {
+  font-size: 2.1rem;
+  margin-bottom: 1rem;
+  color: var(--accent-orange);
+  border-left: 5px solid var(--accent-orange);
+  padding-left: 15px;
+}
+
+h3 {
+  font-size: 1.4rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--accent-orange);
+}
+
+p {
+  font-size: 1.05rem;
+  color: var(--text-white);
+  margin-bottom: 1.2rem;
+}
+
+.card {
+  background: var(--card-green);
+  border-radius: 14px;
+  padding: 2.5rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 12px 34px rgba(0,0,0,0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid rgba(211, 84, 0, 0.2);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.5);
+}
+
+ul, ol {
+  padding-left: 1.4rem;
+  margin-bottom: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.8rem;
+  font-size: 1.05rem;
+  color: var(--muted-white);
+}
+
+.highlight {
+  color: var(--accent-orange);
+  font-weight: 700;
+}
+
+.diagram {
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+.diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.pill {
+  display: inline-block;
+  background: var(--accent-orange);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.bridge-illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0;
+  gap: 20px;
+}
+
+.circle {
+  background: var(--card-green);
+  border: 2px solid var(--accent-orange);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 15px;
+  text-align: center;
+}
+
+.circle h4 {
+  margin: 0;
+  font-size: 1em;
+  color: var(--accent-orange);
+}
+
+.circle p {
+  margin: 5px 0 0 0;
+  font-size: 0.8em;
+}
+
+.bridge-icon {
+  font-size: 2em;
+  color: var(--bridge-blue);
+}
+
+.cta-section {
+  text-align: center;
+  padding: 3rem;
+  background: linear-gradient(135deg, rgba(211, 84, 0, 0.1), rgba(52, 152, 219, 0.1));
+  border-radius: 14px;
+  margin-top: 3rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-orange), #c0392b);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+  margin: 10px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-size: 1.1em;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+  margin: 10px;
+  border: 2px solid var(--accent-orange);
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 1.1em;
+}
+
+.btn-secondary:hover {
+  background: rgba(211, 84, 0, 0.1);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.tagline {
+  font-size: 1.3em;
+  color: var(--muted-white);
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.disclaimer-box {
+  background: rgba(255, 193, 7, 0.1);
+  border-left: 4px solid #ffc107;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 2rem 0;
+  font-size: 0.95em;
+}
+
+.disclaimer-box strong {
+  color: #ffc107;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>How Tulo Square Works</h1>
+    <p class="tagline">Your digital village square, bridging savings and opportunity</p>
+    <div>
+      <span class="pill">Community-First</span>
+      <span class="pill">Not a Bank</span>
+      <span class="pill">Transparent</span>
+      <span class="pill">Education Focused</span>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="card">
+    <h2>The Bridge Between Your Community and Opportunity</h2>
+    <p>
+      Tulo Square is a <span class="highlight">digital community coordination platform</span>
+      that helps Zambians save together in circles, support local businesses, learn about finance,
+      and track collective growth — all while keeping money in your community.
+    </p>
+    <p>
+      <strong>Tulo Square does not hold, invest, or manage money for users.</strong>
+      Instead, we provide the digital tools and trust framework that helps communities
+      coordinate their financial activities transparently.
+    </p>
+    
+    <div class="bridge-illustration">
+      <div class="circle">
+        <h4>Savings Circles</h4>
+        <p>Community pools</p>
+      </div>
+      <div class="bridge-icon">🌉</div>
+      <div class="circle">
+        <h4>Local Businesses</h4>
+        <p>Verified opportunities</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGAL SAFE POSITIONING -->
+  <div class="card">
+    <h2>What Tulo Square Is — and Is Not</h2>
+
+    <h3>What Tulo Square Provides</h3>
+    <ul>
+      <li>Digital tools for managing community savings circles (modern chilimba)</li>
+      <li>A platform to connect savings circles with verified local businesses</li>
+      <li>Financial education content for community learning</li>
+      <li>Transparent tracking of contributions and commitments</li>
+      <li>Templates for community agreements and dispute resolution</li>
+    </ul>
+
+    <h3>What Tulo Square Does NOT Do</h3>
+    <ul>
+      <li><strong>Not a bank:</strong> We don't accept deposits or hold funds</li>
+      <li><strong>Not an investment platform:</strong> We don't offer securities or investment products</li>
+      <li><strong>Not a financial advisor:</strong> We don't give investment advice</li>
+      <li><strong>Not a payment processor:</strong> Money moves directly between users via mobile money/banks</li>
+      <li><strong>Not a fund manager:</strong> Communities manage their own funds</li>
+    </ul>
+
+    <div class="disclaimer-box">
+      <p><strong>⚠️ Important:</strong> Tulo Square is a community coordination platform. All financial transactions occur directly between community members using existing payment methods (mobile money, bank transfers). We provide the bridge, not the banking.</p>
+    </div>
+  </div>
+
+  <!-- THE THREE PILLARS -->
+  <div class="card">
+    <h2>The Three Pillars of Tulo Square</h2>
+
+    <h3>1. Digital Savings Circles</h3>
+    <p>
+      Create or join digital versions of traditional savings groups (chilimba, stokvel) with people you trust.
+      Set goals, track contributions, and manage payouts transparently.
+    </p>
+    <ul>
+      <li>Set clear rules and schedules together</li>
+      <li>Track contributions with digital receipts</li>
+      <li>Automate reminders for contributions</li>
+      <li>View real-time progress toward goals</li>
+    </ul>
+
+    <h3>2. Bridges to Business</h3>
+    <p>
+      Connect your savings circle with vetted local businesses. Support their growth through pre-purchases,
+      group funding, or community commitments.
+    </p>
+    <ul>
+      <li>Browse verified business profiles</li>
+      <li>Commit funds as a group to support growth</li>
+      <li>Track how your support impacts businesses</li>
+      <li>Earn community rewards (discounts, early access)</li>
+    </ul>
+
+    <h3>3. Community Learning Hub</h3>
+    <p>
+      Access financial education designed for Zambian communities. Learn about savings, budgeting,
+      supporting businesses, and making informed financial decisions together.
+    </p>
+    <ul>
+      <li>Bite-sized lessons on financial topics</li>
+      <li>Case studies from successful community groups</li>
+      <li>Tools for tracking community financial health</li>
+      <li>Guidance on creating fair community agreements</li>
+    </ul>
+  </div>
+
+  <!-- HOW IT WORKS STEP-BY-STEP -->
+  <div class="card">
+    <h2>Step-by-Step: How Tulo Square Works</h2>
+
+    <ol>
+      <li><strong>Create Your Account</strong> — Register with your email or phone number</li>
+      <li><strong>Start or Join a Square</strong> — Create a savings circle or join an existing one</li>
+      <li><strong>Set Your Square's Rules</strong> — Agree on contributions, goals, and decision-making</li>
+      <li><strong>Build Bridges</strong> — Connect with verified local businesses you want to support</li>
+      <li><strong>Track & Learn</strong> — Watch your community grow and learn financial skills together</li>
+      <li><strong>Grow Together</strong> — Celebrate milestones and expand your impact</li>
+    </ol>
+
+    <p>
+      Every contribution, commitment, and milestone is recorded transparently.
+      Everyone in your Square sees the same information. No hidden activity.
+    </p>
+  </div>
+
+  <!-- USER DIAGRAM -->
+  <div class="card">
+    <h2>The Tulo Square Bridge in Action</h2>
+
+    <div class="diagram">
+      <svg viewBox="0 0 600 220">
+        <!-- Savings Circle -->
+        <rect x="20" y="80" width="160" height="60" rx="10" fill="#d35400"/>
+        <text x="100" y="105" text-anchor="middle" fill="#ffffff" font-weight="bold" font-size="14">Savings Circle</text>
+        <text x="100" y="125" text-anchor="middle" fill="#f0f0f0" font-size="12">Family, Friends, Community</text>
+
+        <!-- Tulo Square Bridge -->
+        <rect x="220" y="40" width="200" height="140" rx="12" fill="#143d32" stroke="#d35400" stroke-width="2"/>
+        <text x="320" y="90" text-anchor="middle" fill="#ffffff" font-weight="bold">Tulo Square</text>
+        <text x="320" y="115" text-anchor="middle" fill="#d9e5df" font-size="12">Digital Bridge</text>
+        <text x="320" y="135" text-anchor="middle" fill="#d9e5df" font-size="12">Tools • Education • Connection</text>
+
+        <!-- Local Business -->
+        <rect x="460" y="80" width="120" height="60" rx="10" fill="#3498db"/>
+        <text x="520" y="105" text-anchor="middle" fill="#ffffff" font-weight="bold" font-size="14">Local Business</text>
+        <text x="520" y="125" text-anchor="middle" fill="#f0f0f0" font-size="12">Verified • Growing</text>
+
+        <!-- Bridge Lines -->
+        <line x1="180" y1="110" x2="220" y2="110" stroke="#ffffff" stroke-width="2"/>
+        <line x1="420" y1="110" x2="460" y2="110" stroke="#ffffff" stroke-width="2"/>
+        
+        <!-- Bridge Icon -->
+        <text x="320" y="165" text-anchor="middle" fill="#d35400" font-size="24">🌉</text>
+      </svg>
+    </div>
+    
+    <p style="text-align: center; margin-top: 20px;">
+      <strong>Tulo Square is the bridge</strong> that connects community savings with local opportunity, 
+      while keeping money and decisions within the community.
+    </p>
+  </div>
+
+  <!-- STARTING ALONE -->
+  <div class="card">
+    <h2>Starting Small is Smart</h2>
+    <p>
+      You don't need a large group to begin with Tulo Square.
+      Many users start small to learn the platform and prepare for future community building.
+    </p>
+
+    <h3>Ways to Start Small</h3>
+    <ul>
+      <li><strong>Learn First:</strong> Complete financial education modules before forming a circle</li>
+      <li><strong>Family Square:</strong> Start with immediate family members</li>
+      <li><strong>Interest-Based:</strong> Create a Square around a specific goal (school fees, business seed)</li>
+      <li><strong>Digital Chilimba:</strong> Modernize an existing savings group</li>
+    </ul>
+
+    <p>
+      Examples of Square names:
+      <span class="highlight">Mwaba Family Fund</span>,
+      <span class="highlight">Kalingalinga School Fees Pool</span>,
+      <span class="highlight">Kitwe Youth Business Seed</span>
+    </p>
+  </div>
+
+  <!-- COMMUNITY AGREEMENTS -->
+  <div class="card">
+    <h2>Community Agreements & Transparency</h2>
+    <p>
+      Tulo Square provides templates and guidance for creating fair community agreements,
+      but <strong>the agreements are between community members</strong>, not with Tulo Square.
+    </p>
+
+    <h3>Key Agreement Elements</h3>
+    <ul>
+      <li>Clear contribution amounts and schedules</li>
+      <li>Decision-making processes (unanimous, majority, designated leaders)</li>
+      <li>Dispute resolution procedures</li>
+      <li>Withdrawal conditions and notice periods</li>
+      <li>Record-keeping and transparency requirements</li>
+    </ul>
+
+    <p class="highlight">
+      Tulo Square provides the tools — communities make the agreements.
+    </p>
+  </div>
+
+  <!-- REGULATORY VIEW -->
+  <div class="card">
+    <h2>Regulatory Perspective</h2>
+
+    <div class="diagram">
+      <svg viewBox="0 0 600 220">
+        <!-- Community Control -->
+        <rect x="60" y="80" width="180" height="60" rx="10" fill="#d35400"/>
+        <text x="150" y="105" text-anchor="middle" fill="#ffffff" font-weight="bold" font-size="14">Community Control</text>
+        <text x="150" y="125" text-anchor="middle" fill="#f0f0f0" font-size="12">Funds • Decisions • Agreements</text>
+
+        <!-- Tulo Square Platform -->
+        <rect x="320" y="80" width="220" height="60" rx="10" fill="#143d32" stroke="#d35400" stroke-width="2"/>
+        <text x="430" y="105" text-anchor="middle" fill="#ffffff" font-weight="bold">Tulo Square Platform</text>
+        <text x="430" y="125" text-anchor="middle" fill="#d9e5df" font-size="12">Coordination Tools Only</text>
+
+        <!-- Connection Line -->
+        <line x1="240" y1="110" x2="320" y2="110" stroke="#ffffff" stroke-width="2"/>
+        
+        <!-- PACRA Badge -->
+        <rect x="250" y="150" width="100" height="30" rx="5" fill="#2ecc71" opacity="0.8"/>
+        <text x="300" y="170" text-anchor="middle" fill="#ffffff" font-size="12">PACRA Registered</text>
+        
+        <!-- Not a Bank Badge -->
+        <rect x="370" y="150" width="120" height="30" rx="5" fill="#e74c3c" opacity="0.8"/>
+        <text x="430" y="170" text-anchor="middle" fill="#ffffff" font-size="12">Not a Bank/Financial</text>
+      </svg>
+    </div>
+    
+    <div class="disclaimer-box" style="margin-top: 20px;">
+      <p><strong>Regulatory Status:</strong> Tulo Square is registered with PACRA as a technology platform for community coordination. We are not regulated by SEC Zambia or Bank of Zambia as we do not accept deposits, make investments, or provide financial services. We are the digital square where communities meet — not the bank where money is kept.</p>
+    </div>
+  </div>
+
+  <!-- CALL TO ACTION -->
+  <div class="cta-section">
+    <h2 style="color: white; border: none; text-align: center;">Ready to Build Your Village Square?</h2>
+    <p>Join the waitlist to be among the first to experience community finance done right.</p>
+    
+    <div>
+      <a href="register.html" class="btn-primary">Join Waitlist Now</a>
+      <a href="dashboard.html" class="btn-secondary">View Sample Dashboard</a>
+    </div>
+    
+    <p style="margin-top: 20px; font-size: 0.9em; color: var(--muted-white);">
+      <i class="fas fa-gift"></i> Early members get premium features free for 6 months
+    </p>
+  </div>
+
+</div>
+
+<script>
+  // Add FontAwesome icons
+  document.addEventListener('DOMContentLoaded', function() {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+    document.head.appendChild(link);
+    
+    // Add icons to the CTA section
+    setTimeout(() => {
+      const ctaText = document.querySelector('.cta-section p:last-child');
+      if (ctaText) {
+        ctaText.innerHTML = '<i class="fas fa-gift"></i> Early members get premium features free for 6 months';
+      }
+    }, 100);
+  });
+</script>
+
+</body>
+</html>
