@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tulo Square – Your Digital Village Square</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* === TULO SQUARE DARK GREEN THEME === */
+    :root {
+      --tzf-primary: #d35400;
+      --tzf-primary-dark: #c0392b;
+      --tzf-bg-dark: #0a1f1c;
+      --tzf-bg-card: rgba(255,255,255,0.05);
+      --tzf-text-light: #ffffff;
+      --tzf-text-muted: rgba(255,255,255,0.85);
+      --tzf-accent-gold: #f39c12;
+      --tzf-success: #2ecc71;
+      --tzf-border: rgba(255,255,255,0.12);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--tzf-bg-dark) !important;
+      color: var(--tzf-text-light) !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background-color: rgba(10,31,28,0.98) !important;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--tzf-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--tzf-primary);
+    }
+
+    .logo img {
+      width: 60px;
+      border-radius: 8px;
+    }
+
+    .tagline {
+      font-size: 12px;
+      color: var(--tzf-text-muted);
+      font-weight: 400;
+      margin-left: 5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-btn {
+      color: var(--tzf-text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-btn:hover {
+      color: var(--tzf-primary);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--tzf-primary), var(--tzf-primary-dark));
+      color: var(--tzf-text-light) !important;
+      padding: 12px 24px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-block;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      padding: 80px 20px;
+      background: radial-gradient(circle at top, rgba(211, 84, 0, 0.25), var(--tzf-bg-dark) 70%) !important;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      color: var(--tzf-text-light);
+    }
+
+    .hero p {
+      font-size: 1.2em;
+      max-width: 800px;
+      margin: 0 auto 30px;
+      color: var(--tzf-text-muted);
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .trust-badges {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .badge {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--tzf-text-light) !important;
+      backdrop-filter: blur(6px);
+    }
+
+    /* SECTIONS */
+    .section {
+      padding: 80px 20px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.4em;
+      margin-bottom: 20px;
+      color: var(--tzf-text-light);
+    }
+
+    .section-subtitle {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 50px;
+      color: var(--tzf-text-muted);
+      font-size: 1.1em;
+    }
+
+    /* CARDS */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--tzf-bg-card);
+      border: 1px solid var(--tzf-border);
+      border-radius: 18px;
+      padding: 30px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .card h3 {
+      color: var(--tzf-primary);
+      margin-bottom: 15px;
+      font-size: 1.4em;
+    }
+
+    .card p {
+      color: var(--tzf-text-muted);
+    }
+
+    /* TULO SQUARE SPECIFIC */
+    .tzf-card, .tzf-step {
+      background: rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 26px;
+      border: 1px solid rgba(211, 84, 0, 0.3);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.35);
+      transition: transform .25s ease, box-shadow .25s ease;
+      color: var(--tzf-text-light);
+    }
+
+    .tzf-card:hover, .tzf-step:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.45);
+    }
+
+    .tzf-icon {
+      font-size: 2.4em;
+      margin-bottom: 14px;
+      color: var(--tzf-primary);
+    }
+
+    /* WHO IT'S FOR SECTION */
+    #who-its-for {
+      background: #F7FDFC;
+      color: #0A2540 !important;
+    }
+
+    #who-its-for * {
+      color: #0A2540 !important;
+    }
+
+    .who-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .who-card.for {
+      border-top: 6px solid var(--tzf-success);
+    }
+
+    .who-card.not-for {
+      border-top: 6px solid #c0392b;
+    }
+
+    .who-card h3 {
+      margin-bottom: 18px;
+    }
+
+    .who-card ul {
+      padding-left: 20px;
+      line-height: 1.6;
+    }
+
+    .who-card li {
+      margin-bottom: 8px;
+    }
+
+    /* FOOTER */
+    footer {
+      background: rgba(0,0,0,0.5);
+      padding: 40px 20px;
+      text-align: center;
+      border-top: 1px solid var(--tzf-border);
+    }
+
+    footer p {
+      color: var(--tzf-text-muted);
+      margin: 10px 0;
+    }
+
+    footer a {
+      color: var(--tzf-primary);
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    .disclaimer {
+      background: rgba(255, 193, 7, 0.1);
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 30px auto;
+      max-width: 900px;
+      font-size: 0.9em;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2em;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* VILLAGE STATS */
+    .village-stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin: 40px 0;
+    }
+
+    .stat-box {
+      text-align: center;
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 12px;
+      min-width: 150px;
+    }
+
+    .stat-number {
+      font-size: 2.5em;
+      font-weight: 700;
+      color: var(--tzf-primary);
+      display: block;
+    }
+
+    .stat-label {
+      color: var(--tzf-text-muted);
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="logo">
+    <img src="https://via.placeholder.com/60x60/d35400/ffffff?text=TS" alt="Tulo Square Logo">
+    <div>
+      <div>Tulo Square</div>
+      <div class="tagline">Your digital village square</div>
+    </div>
+  </div>
+  
+  <nav class="nav-links">
+    <a href="#features" class="nav-btn">Features</a>
+    <a href="#how" class="nav-btn">How It Works</a>
+    <a href="#who" class="nav-btn">Who It's For</a>
+    <a href="dashboard.html" class="nav-btn">Dashboard</a>
+    <a href="register.html" class="btn-primary">Join Waitlist</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Your Digital Village Square</h1>
+  <p><strong>Bridging savings and opportunity in Zambian communities.</strong> Tulo Square helps everyday people save together, support small businesses, learn about finance, and track growth — without being a bank or offering regulated investments.</p>
+  
+  <p>Think of it as a <strong>digital savings circle</strong> for friends and family • a <strong>community support platform</strong> for local businesses • a <strong>learning hub</strong> for financial skills • your <strong>bridge</strong> between savings and opportunity.</p>
+  
+  <div class="hero-buttons">
+    <a href="register.html" class="btn-primary">Join Waitlist</a>
+    <a href="#how" class="btn-primary" style="background: transparent; border: 2px solid var(--tzf-primary);">Learn More</a>
+  </div>
+  
+  <div class="village-stats">
+    <div class="stat-box">
+      <span class="stat-number">312</span>
+      <span class="stat-label">People Connected</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">ZMK 425K</span>
+      <span class="stat-label">In Active Squares</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">23</span>
+      <span class="stat-label">Businesses Supported</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number">1,245</span>
+      <span class="stat-label">Lessons Completed</span>
+    </div>
+  </div>
+  
+  <div class="trust-badges">
+    <span class="badge"><i class="fas fa-shield-alt"></i> Community-First</span>
+    <span class="badge"><i class="fas fa-balance-scale"></i> PACRA Compliant</span>
+    <span class="badge"><i class="fas fa-hands-helping"></i> Not a Bank</span>
+    <span class="badge"><i class="fas fa-graduation-cap"></i> Education Focused</span>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="section">
+  <h2 class="section-title">Why Tulo Square?</h2>
+  <p class="section-subtitle">We build bridges between your community's savings and local opportunities</p>
+  
+  <div class="card-grid">
+    <div class="card">
+      <div class="tzf-icon">👥</div>
+      <h3>Community Circles</h3>
+      <p>Create or join digital savings circles with people you trust. Track contributions transparently and grow together.</p>
+    </div>
+    
+    <div class="card">
+      <div class="tzf-icon">🌉</div>
+      <h3>Bridge to Business</h3>
+      <p>Connect your savings circle with vetted local businesses. Support growth while earning community rewards.</p>
+    </div>
+    
+    <div class="card">
+      <div class="tzf-icon">📚</div>
+      <h3>Financial Learning</h3>
+      <p>Access bite-sized lessons on savings, budgeting, and supporting businesses. Knowledge before action.</p>
+    </div>
+    
+    <div class="card">
+      <div class="tzf-icon">🔐</div>
+      <h3>Trust & Transparency</h3>
+      <p>We never hold your money. All funds move directly between you and your community. We're the bridge, not the bank.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="section" style="background: rgba(211, 84, 0, 0.1);">
+  <h2 class="section-title">How Tulo Square Works</h2>
+  <p class="section-subtitle">Three simple steps to bridge savings with opportunity</p>
+  
+  <div class="card-grid">
+    <div class="tzf-step">
+      <div class="tzf-icon">🏘️</div>
+      <h3>1. Form Your Square</h3>
+      <p>Start a savings circle (Square) with family, friends, or community members. Set goals and rules together.</p>
+      <ul>
+        <li>Choose a goal (school fees, business fund, etc.)</li>
+        <li>Invite trusted members</li>
+        <li>Set contribution amounts and schedule</li>
+      </ul>
+    </div>
+    
+    <div class="tzf-step">
+      <div class="tzf-icon">🌉</div>
+      <h3>2. Build Bridges</h3>
+      <p>Connect your Square to vetted local businesses. Support their growth through pre-purchases or group funding.</p>
+      <ul>
+        <li>Browse verified business profiles</li>
+        <li>Commit funds as a group</li>
+        <li>Track business progress together</li>
+      </ul>
+    </div>
+    
+    <div class="tzf-step">
+      <div class="tzf-icon">📈</div>
+      <h3>3. Grow Together</h3>
+      <p>Watch your community thrive. Track savings growth, business impact, and learn financial skills along the way.</p>
+      <ul>
+        <li>Real-time progress dashboards</li>
+        <li>Community impact reporting</li>
+        <li>Continuous financial education</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="section">
+  <h2 class="section-title">Our Platform Services</h2>
+  <p class="section-subtitle">Tools for community finance, without the regulation</p>
+  
+  <div class="card-grid">
+    <div class="tzf-card">
+      <div class="tzf-icon">🏦</div>
+      <h3>Digital Savings Circles</h3>
+      <p>Modern chilimba/stokvel management with digital tracking, reminders, and transparency for all members.</p>
+    </div>
+    
+    <div class="tzf-card">
+      <div class="tzf-icon">🏪</div>
+      <h3>Business Marketplace</h3>
+      <p>Verified local business profiles where communities can pledge support, pre-purchase, or fund growth.</p>
+    </div>
+    
+    <div class="tzf-card">
+      <div class="tzf-icon">📊</div>
+      <h3>Progress Tracking</h3>
+      <p>Dashboards showing savings progress, business impact, and community growth—all in one place.</p>
+    </div>
+    
+    <div class="tzf-card">
+      <div class="tzf-icon">🎓</div>
+      <h3>Financial Education</h3>
+      <p>Bite-sized lessons on savings, budgeting, supporting businesses, and understanding financial concepts.</p>
+    </div>
+    
+    <div class="tzf-card">
+      <div class="tzf-icon">🤝</div>
+      <h3>Community Tools</h3>
+      <p>Templates for agreements, dispute resolution guides, and communication tools for your Square.</p>
+    </div>
+    
+    <div class="tzf-card">
+      <div class="tzf-icon">📱</div>
+      <h3>Mobile-First Platform</h3>
+      <p>Accessible on any device. Works with mobile money for transactions (direct between users).</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section id="who" class="section" style="background: #F7FDFC; color: #0A2540 !important;">
+  <h2 class="section-title" style="color: #0A2540;">Who Tulo Square Is For</h2>
+  <p class="section-subtitle" style="color: #3a4a4f;">And who it's not for</p>
+  
+  <div class="card-grid">
+    <div class="who-card for">
+      <h3 style="color: #0A2540;">✅ Perfect For:</h3>
+      <ul>
+        <li><strong>Community groups</strong> wanting digital savings circles</li>
+        <li><strong>Small businesses</strong> seeking community support</li>
+        <li><strong>Individuals</strong> learning about finance in community</li>
+        <li><strong>Churches & organizations</strong> managing member funds</li>
+        <li><strong>Families</strong> saving together for common goals</li>
+      </ul>
+    </div>
+    
+    <div class="who-card not-for">
+      <h3 style="color: #0A2540;">🚫 Not For:</h3>
+      <ul>
+        <li>Those seeking <strong>guaranteed investment returns</strong></li>
+        <li>People wanting <strong>anonymous, quick-profit schemes</strong></li>
+        <li>Those who <strong>avoid transparency and community</strong></li>
+        <li>Anyone wanting <strong>Trust ZedFund to hold their money</strong></li>
+        <li>People expecting <strong>bank-like services or insurance</strong></li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="disclaimer" style="color: #0A2540; margin-top: 40px;">
+    <p><strong>⚠️ Important:</strong> Tulo Square is a community platform technology product. We do not hold funds, make investments, or provide financial advice. We are the digital bridge connecting communities with opportunities. All financial transactions occur directly between users.</p>
+  </div>
+</section>
+
+<!-- CALL TO ACTION -->
+<section class="section" style="background: linear-gradient(135deg, var(--tzf-primary), var(--tzf-primary-dark)); text-align: center;">
+  <h2 style="color: white; margin-bottom: 20px;">Ready to Build Your Village Square?</h2>
+  <p style="color: rgba(255,255,255,0.9); max-width: 700px; margin: 0 auto 30px;">Join the waitlist to be among the first to experience community finance done right.</p>
+  
+  <div class="hero-buttons">
+    <a href="register.html" class="btn-primary" style="background: white; color: var(--tzf-primary) !important;">Join Waitlist Now</a>
+    <a href="dashboard.html" class="btn-primary" style="background: transparent; border: 2px solid white;">View Sample Dashboard</a>
+  </div>
+  
+  <p style="color: rgba(255,255,255,0.8); margin-top: 30px; font-size: 0.9em;">
+    <i class="fas fa-gift"></i> Early members get premium features free for 6 months
+  </p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <p style="font-size: 1.2em; margin-bottom: 20px;">
+      <strong>Tulo Square</strong><br>
+      <span style="font-size: 0.9em; color: var(--tzf-text-muted);">Your digital village square, bridging savings and opportunity</span>
+    </p>
+    
+    <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin: 30px 0;">
+      <div>
+        <h4 style="color: var(--tzf-primary); margin-bottom: 10px;">For Communities</h4>
+        <p><a href="#">Savings Circles</a></p>
+        <p><a href="#">Learning Hub</a></p>
+        <p><a href="#">Community Tools</a></p>
+      </div>
+      
+      <div>
+        <h4 style="color: var(--tzf-primary); margin-bottom: 10px;">For Businesses</h4>
+        <p><a href="#">Get Verified</a></p>
+        <p><a href="#">Community Funding</a></p>
+        <p><a href="#">Success Stories</a></p>
+      </div>
+      
+      <div>
+        <h4 style="color: var(--tzf-primary); margin-bottom: 10px;">Company</h4>
+        <p><a href="about.html">About Us</a></p>
+        <p><a href="#">How It Works</a></p>
+        <p><a href="#">Contact</a></p>
+      </div>
+    </div>
+    
+    <div class="disclaimer">
+      <p><strong>⚠️ Transparency Notice:</strong> Tulo Square is a community coordination platform, not a financial institution. We do not accept deposits, make investments, or provide financial advice. All funds move directly between community members. We are registered with PACRA as a technology platform for community coordination.</p>
+    </div>
+    
+    <p>© 2025 Tulo Square. All rights reserved.</p>
+    <p>
+      <a href="about.html">About</a> |
+      <a href="terms.html">Terms</a> |
+      <a href="privacy.html">Privacy</a> |
+      <a href="disclaimer.html">Full Disclaimer</a>
+    </p>
+    <p class="disclaimer" style="font-size: 0.8em; margin-top: 20px;">Building bridges, not banks. Growing communities together.</p>
+  </div>
+</footer>
+
+<script>
+  // Simple reveal animation
+  document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+    
+    // Observe all cards and sections
+    document.querySelectorAll('.card, .tzf-card, .tzf-step').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(el);
+    });
+    
+    // Mobile menu toggle (simplified)
+    const menuToggle = document.createElement('button');
+    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    menuToggle.style.cssText = `
+      background: transparent;
+      border: none;
+      color: var(--tzf-primary);
+      font-size: 1.5em;
+      display: none;
+      cursor: pointer;
+    `;
+    
+    document.querySelector('.navbar').appendChild(menuToggle);
+    
+    // Responsive menu
+    if (window.innerWidth <= 768) {
+      menuToggle.style.display = 'block';
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.style.display = 'none';
+      navLinks.style.position = 'absolute';
+      navLinks.style.top = '100%';
+      navLinks.style.left = '0';
+      navLinks.style.right = '0';
+      navLinks.style.background = 'var(--tzf-bg-dark)';
+      navLinks.style.padding = '20px';
+      navLinks.style.flexDirection = 'column';
+      navLinks.style.gap = '15px';
+      navLinks.style.borderBottom = '1px solid var(--tzf-border)';
+      
+      menuToggle.addEventListener('click', () => {
+        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
