@@ -471,17 +471,12 @@
   });
 </script>
 
-<!-- Firebase and Auth Scripts -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+<!-- Import your firebase.js module -->
+<script type="module">
+  // Import the registerUser function from your firebase.js
+  import { registerUser } from "./firebase.js";
 
-<!-- Your Firebase Config -->
-<script src="firebase-config.js"></script>
-
-<!-- Auth Logic -->
-<script>
-  // Wait for DOM and Firebase to load
+  // Wait for DOM to load
   document.addEventListener('DOMContentLoaded', function() {
     const signupForm = document.getElementById('signupForm');
     const signupBtn = document.getElementById('signupBtn');
@@ -512,45 +507,59 @@
         return;
       }
       
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showError('Please enter a valid email address');
+        return;
+      }
+      
+      // Validate phone format (Zambian)
+      const phoneDigits = phone.replace(/\D/g, '');
+      if (phoneDigits.length !== 9 && phoneDigits.length !== 10) {
+        showError('Please enter a valid Zambian phone number (e.g., 97 123 4567)');
+        return;
+      }
+      
       // Disable button and show loading
       signupBtn.disabled = true;
       signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
       
       try {
-        // 1. Create user in Firebase Authentication
-        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-        
-        // 2. Save additional user data to Realtime Database
+        // Prepare user data in the format your registerUser expects
         const userData = {
-          name: name,
-          email: email,
-          phone: '+260' + phone.replace(/\D/g, ''), // Store as full number
+          displayName: name,
+          phoneNumber: '+260' + phoneDigits,
+          // Include other fields from your form
           referralSource: referralSource,
-          referralCode: referralCode || null,
-          createdAt: firebase.database.ServerValue.TIMESTAMP,
-          lastLogin: firebase.database.ServerValue.TIMESTAMP,
-          squares: {} // Will hold squares user is part of
+          referredBy: referralCode || null,
+          userType: "community_member", // Default for Tulo Square
+          location: "", // You might want to add this field to your form
+          communityBio: "" // You might want to add this field to your form
         };
         
-        // Write to database
-        await firebase.database().ref('users/' + user.uid).set(userData);
+        // Use the registerUser function from your firebase.js
+        const result = await registerUser(email, password, userData);
         
-        // 3. If there's a referral code, log it
-        if (referralCode) {
-          await firebase.database().ref('referrals/' + referralCode + '/' + user.uid).set({
-            referredAt: firebase.database.ServerValue.TIMESTAMP,
-            newUserEmail: email
-          });
+        if (result.success) {
+          // Show success message
+          showSuccess('Account created successfully! Welcome to Tulo Square.');
+          
+          // Store referral code if provided (in addition to what registerUser does)
+          if (referralCode && result.user) {
+            // You might want to enhance your registerUser function to handle this
+            // or call a separate function to record referrals
+            console.log('Referral recorded:', referralCode, 'for user:', result.user.uid);
+          }
+          
+          // Redirect to dashboard after 2 seconds
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 2000);
+        } else {
+          // Handle registration error
+          throw new Error(result.error);
         }
-        
-        // Show success message
-        showSuccess('Account created successfully! Redirecting to your dashboard...');
-        
-        // Redirect to dashboard after 2 seconds
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 2000);
         
       } catch (error) {
         // Handle errors
@@ -559,21 +568,17 @@
         
         let errorMessage = 'Error creating account. ';
         
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            errorMessage += 'This email is already registered.';
-            break;
-          case 'auth/invalid-email':
-            errorMessage += 'Invalid email address.';
-            break;
-          case 'auth/weak-password':
-            errorMessage += 'Password is too weak.';
-            break;
-          case 'auth/network-request-failed':
-            errorMessage += 'Network error. Please check your connection.';
-            break;
-          default:
-            errorMessage += error.message;
+        // Check for specific Firebase errors
+        if (error.message.includes('email-already-in-use')) {
+          errorMessage += 'This email is already registered.';
+        } else if (error.message.includes('invalid-email')) {
+          errorMessage += 'Invalid email address.';
+        } else if (error.message.includes('weak-password')) {
+          errorMessage += 'Password is too weak. Please use at least 6 characters.';
+        } else if (error.message.includes('network-request-failed')) {
+          errorMessage += 'Network error. Please check your internet connection.';
+        } else {
+          errorMessage += error.message;
         }
         
         showError(errorMessage);
@@ -581,20 +586,24 @@
     });
     
     function showError(message) {
-      errorDiv.textContent = message;
-      errorDiv.style.display = 'block';
-      successDiv.style.display = 'none';
-      
-      // Auto-hide error after 5 seconds
-      setTimeout(() => {
-        errorDiv.style.display = 'none';
-      }, 5000);
+      if (errorDiv) {
+        errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+        errorDiv.style.display = 'block';
+        if (successDiv) successDiv.style.display = 'none';
+        
+        // Auto-hide error after 8 seconds
+        setTimeout(() => {
+          errorDiv.style.display = 'none';
+        }, 8000);
+      }
     }
     
     function showSuccess(message) {
-      successDiv.textContent = message;
-      successDiv.style.display = 'block';
-      errorDiv.style.display = 'none';
+      if (successDiv) {
+        successDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+        successDiv.style.display = 'block';
+        if (errorDiv) errorDiv.style.display = 'none';
+      }
     }
   });
 </script>
