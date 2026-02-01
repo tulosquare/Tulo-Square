@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Join Tulo Square | Your Digital Village Square</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* === TULO SQUARE REGISTER PAGE === */
+    :root {
+      --tzf-bg-dark: #0a1f1c;
+      --tzf-orange-main: #d35400;
+      --tzf-orange-light: #e67e22;
+      --tzf-accent-blue: #3498db;
+      --tzf-text-muted: #8fa7a3;
+      --tzf-white: #ffffff;
+      --tzf-success: #2ecc71;
+      --tzf-error: #e74c3c;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(160deg, var(--tzf-bg-dark), #06201c);
+      color: var(--tzf-white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: rgba(10, 31, 28, 0.98);
+      padding: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--tzf-orange-main);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      font-size: 1.8rem;
+    }
+
+    nav a {
+      color: var(--tzf-text-muted);
+      text-decoration: none;
+      margin-left: 25px;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--tzf-orange-main);
+    }
+
+    /* HERO */
+    .auth-hero {
+      padding: 60px 20px 40px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .auth-hero h1 {
+      font-size: 2.5rem;
+      color: var(--tzf-orange-main);
+      margin-bottom: 20px;
+    }
+
+    .auth-hero .tagline {
+      font-size: 1.3rem;
+      color: var(--tzf-accent-blue);
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .auth-hero p {
+      color: var(--tzf-text-muted);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .trust-badges {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .badge {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--tzf-white);
+      backdrop-filter: blur(6px);
+    }
+
+    /* AUTH CARD */
+    .auth-wrapper {
+      max-width: 500px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
+    }
+
+    .auth-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 18px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .auth-card h2 {
+      color: var(--tzf-orange-main);
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 1.8rem;
+    }
+
+    /* FORM INPUTS */
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--tzf-text-muted);
+      font-size: 0.95rem;
+    }
+
+    .input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--tzf-white);
+      font-size: 1rem;
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    .input:focus {
+      outline: none;
+      border-color: var(--tzf-orange-main);
+      box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.2);
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .toggle-eye {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--tzf-text-muted);
+      font-size: 1.2rem;
+    }
+
+    .toggle-eye:hover {
+      color: var(--tzf-orange-main);
+    }
+
+    /* BUTTON */
+    .primary-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--tzf-orange-light), var(--tzf-orange-main));
+      color: white;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* MESSAGES */
+    .error-text {
+      color: var(--tzf-error);
+      background: rgba(231, 76, 60, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border-left: 4px solid var(--tzf-error);
+      display: none;
+    }
+
+    .success-text {
+      color: var(--tzf-success);
+      background: rgba(46, 204, 113, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border-left: 4px solid var(--tzf-success);
+      display: none;
+    }
+
+    /* FOOTER & LINKS */
+    .auth-switch {
+      text-align: center;
+      margin-top: 25px;
+      color: var(--tzf-text-muted);
+    }
+
+    .auth-switch a {
+      color: var(--tzf-orange-main);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .auth-switch a:hover {
+      text-decoration: underline;
+    }
+
+    .auth-footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--tzf-text-muted);
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: auto;
+    }
+
+    .disclaimer {
+      background: rgba(255, 193, 7, 0.1);
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+
+    /* PHONE INPUT SPECIFIC */
+    .phone-input {
+      display: flex;
+      gap: 10px;
+    }
+
+    .phone-prefix {
+      flex: 0 0 80px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--tzf-text-muted);
+      text-align: center;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .auth-hero h1 {
+        font-size: 2rem;
+      }
+      
+      .auth-card {
+        padding: 30px 20px;
+      }
+      
+      .navbar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      
+      nav {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      nav a {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <a href="index.html" class="logo">
+    <span class="logo-icon">🌉</span>
+    <span>Tulo Square</span>
+  </a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="about.html">About</a>
+    <a href="login.html">Login</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="auth-hero">
+  <h1>Join Your Digital Village Square</h1>
+  <div class="tagline">Bridging savings and opportunity in Zambian communities</div>
+  <p>
+    Tulo Square helps you save with your community, support local businesses, 
+    learn about finance, and track collective growth — without being a bank or 
+    offering regulated investments.
+  </p>
+  
+  <div class="trust-badges">
+    <span class="badge"><i class="fas fa-shield-alt"></i> Community-First</span>
+    <span class="badge"><i class="fas fa-balance-scale"></i> PACRA Compliant</span>
+    <span class="badge"><i class="fas fa-users"></i> Not a Bank</span>
+    <span class="badge"><i class="fas fa-graduation-cap"></i> Education Focused</span>
+  </div>
+</section>
+
+<!-- SIGNUP CARD -->
+<div class="auth-wrapper">
+  <form id="signupForm" class="auth-card">
+    <h2>Join Tulo Square</h2>
+    
+    <div class="disclaimer">
+      <p><strong>⚠️ Important:</strong> Tulo Square is a community coordination platform. 
+      We are not a bank or investment platform. We provide tools for communities to save 
+      together and support local businesses.</p>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Full Name</label>
+      <input class="input" id="name" placeholder="e.g. Chanda Banda" required />
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Email Address</label>
+      <input class="input" id="email" type="email" placeholder="your.email@example.com" required />
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Phone Number (for community contact)</label>
+      <div class="phone-input">
+        <div class="phone-prefix">+260</div>
+        <input class="input" id="phone" placeholder="97 123 4567" type="tel" required />
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Create Password</label>
+      <div class="password-wrap">
+        <input class="input" id="password" type="password" placeholder="Minimum 6 characters" required />
+        <span class="toggle-eye" onclick="togglePassword('password')">
+          <i class="fas fa-eye"></i>
+        </span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">How did you hear about us?</label>
+      <select class="input" id="referralSource">
+        <option value="">Select one...</option>
+        <option value="friend">Friend or Family</option>
+        <option value="church">Church/Community Group</option>
+        <option value="social">Social Media</option>
+        <option value="search">Online Search</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Referral Code (optional)</label>
+      <input class="input" id="referralCode" placeholder="If a member referred you" />
+    </div>
+
+    <div id="signupError" class="error-text"></div>
+    <div id="signupSuccess" class="success-text"></div>
+
+    <button type="submit" class="primary-btn" id="signupBtn">
+      <i class="fas fa-user-plus"></i> Join Tulo Square
+    </button>
+
+    <p class="auth-switch">
+      Already part of a village square?
+      <a href="login.html">Login to your account</a>
+    </p>
+  </form>
+</div>
+
+<footer class="auth-footer">
+  <p>© 2025 Tulo Square. Your digital village square, bridging savings and opportunity.</p>
+  <p style="margin-top: 10px; font-size: 0.8rem; color: rgba(255,255,255,0.6);">
+    Tulo Square is a community coordination platform registered with PACRA.<br>
+    We are not a bank, investment platform, or financial institution.
+  </p>
+</footer>
+
+<script>
+  // Password toggle function
+  function togglePassword(id) {
+    const input = document.getElementById(id);
+    const eyeIcon = input.parentElement.querySelector('.fa-eye');
+    if (input.type === "password") {
+      input.type = "text";
+      eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+      input.type = "password";
+      eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+  }
+
+  // Auto-fill referral code from URL
+  document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    const refCode = params.get("ref");
+    
+    if (refCode) {
+      const referralInput = document.getElementById("referralCode");
+      if (referralInput) {
+        referralInput.value = refCode;
+      }
+    }
+    
+    // Format phone number as user types
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+      phoneInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 0) {
+          // Format as XXX XXX XXXX
+          if (value.length <= 3) {
+            value = value;
+          } else if (value.length <= 6) {
+            value = value.slice(0, 3) + ' ' + value.slice(3);
+          } else {
+            value = value.slice(0, 3) + ' ' + value.slice(3, 6) + ' ' + value.slice(6, 9);
+          }
+        }
+        e.target.value = value;
+      });
+    }
+  });
+</script>
+
+<!-- Firebase and Auth Scripts -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+
+<!-- Your Firebase Config -->
+<script src="firebase-config.js"></script>
+
+<!-- Auth Logic -->
+<script>
+  // Wait for DOM and Firebase to load
+  document.addEventListener('DOMContentLoaded', function() {
+    const signupForm = document.getElementById('signupForm');
+    const signupBtn = document.getElementById('signupBtn');
+    const errorDiv = document.getElementById('signupError');
+    const successDiv = document.getElementById('signupSuccess');
+    
+    if (!signupForm) return;
+    
+    signupForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      // Get form values
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value;
+      const referralSource = document.getElementById('referralSource').value;
+      const referralCode = document.getElementById('referralCode').value.trim();
+      
+      // Basic validation
+      if (!name || !email || !phone || !password) {
+        showError('Please fill in all required fields');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showError('Password must be at least 6 characters');
+        return;
+      }
+      
+      // Disable button and show loading
+      signupBtn.disabled = true;
+      signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+      
+      try {
+        // 1. Create user in Firebase Authentication
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // 2. Save additional user data to Realtime Database
+        const userData = {
+          name: name,
+          email: email,
+          phone: '+260' + phone.replace(/\D/g, ''), // Store as full number
+          referralSource: referralSource,
+          referralCode: referralCode || null,
+          createdAt: firebase.database.ServerValue.TIMESTAMP,
+          lastLogin: firebase.database.ServerValue.TIMESTAMP,
+          squares: {} // Will hold squares user is part of
+        };
+        
+        // Write to database
+        await firebase.database().ref('users/' + user.uid).set(userData);
+        
+        // 3. If there's a referral code, log it
+        if (referralCode) {
+          await firebase.database().ref('referrals/' + referralCode + '/' + user.uid).set({
+            referredAt: firebase.database.ServerValue.TIMESTAMP,
+            newUserEmail: email
+          });
+        }
+        
+        // Show success message
+        showSuccess('Account created successfully! Redirecting to your dashboard...');
+        
+        // Redirect to dashboard after 2 seconds
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 2000);
+        
+      } catch (error) {
+        // Handle errors
+        signupBtn.disabled = false;
+        signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Join Tulo Square';
+        
+        let errorMessage = 'Error creating account. ';
+        
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            errorMessage += 'This email is already registered.';
+            break;
+          case 'auth/invalid-email':
+            errorMessage += 'Invalid email address.';
+            break;
+          case 'auth/weak-password':
+            errorMessage += 'Password is too weak.';
+            break;
+          case 'auth/network-request-failed':
+            errorMessage += 'Network error. Please check your connection.';
+            break;
+          default:
+            errorMessage += error.message;
+        }
+        
+        showError(errorMessage);
+      }
+    });
+    
+    function showError(message) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      successDiv.style.display = 'none';
+      
+      // Auto-hide error after 5 seconds
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 5000);
+    }
+    
+    function showSuccess(message) {
+      successDiv.textContent = message;
+      successDiv.style.display = 'block';
+      errorDiv.style.display = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
