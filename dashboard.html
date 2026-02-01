@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tulo Square - Your Digital Village Square</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: #ffffff;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 22px;
+            color: #d35400;
+        }
+        
+        .logo-icon {
+            color: #d35400;
+        }
+        
+        .tagline {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: 400;
+            margin-left: 5px;
+        }
+        
+        .profile-menu {
+            position: relative;
+        }
+        
+        #profileBtn {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        #profileBtn:hover {
+            background: #f1f2f6;
+        }
+        
+        .profile-dropdown {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            width: 220px;
+            overflow: hidden;
+            z-index: 101;
+            display: none;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .profile-dropdown.show {
+            display: block;
+        }
+        
+        .profile-dropdown button {
+            width: 100%;
+            padding: 14px 18px;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+        
+        .profile-dropdown button:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .profile-dropdown hr {
+            border: none;
+            height: 1px;
+            background: #e0e0e0;
+            margin: 5px 0;
+        }
+        
+        .logout-btn {
+            color: #e74c3c !important;
+        }
+        
+        /* Hero Section */
+        .dashboard-hero {
+            background: linear-gradient(135deg, #d35400 0%, #e67e22 100%);
+            color: white;
+            padding: 28px 20px;
+            border-radius: 0 0 24px 24px;
+            margin-bottom: 24px;
+        }
+        
+        .dashboard-hero h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .dashboard-hero p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .user-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 12px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-cards {
+            padding: 0 20px;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+        
+        @media (min-width: 768px) {
+            .card-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #f1f2f6;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+        }
+        
+        .card h3 {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-amount {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .card-deposit .card-amount {
+            color: #2ecc71;
+        }
+        
+        .card-earnings .card-amount {
+            color: #e67e22;
+        }
+        
+        .card-progress .card-amount {
+            color: #3498db;
+        }
+        
+        .card-impact .card-amount {
+            color: #9b59b6;
+        }
+        
+        .card small {
+            color: #7f8c8d;
+            font-size: 13px;
+            display: block;
+            margin-bottom: 18px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #2ecc71;
+            border-radius: 4px;
+            width: 65%;
+        }
+        
+        .btn-primary {
+            background: #d35400;
+            color: white;
+            border: none;
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            font-size: 15px;
+            margin-top: 10px;
+        }
+        
+        .btn-primary:hover {
+            background: #c0392b;
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        
+        .btn-secondary:hover {
+            background: #f1f2f6;
+        }
+        
+        /* Village Squares Section */
+        .dashboard-squares {
+            padding: 0 20px;
+            margin-bottom: 28px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-header h2 {
+            font-size: 20px;
+            color: #2c3e50;
+        }
+        
+        .view-all {
+            color: #d35400;
+            font-weight: 500;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        
+        .square-item {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #d35400;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+        }
+        
+        .square-info h4 {
+            font-size: 17px;
+            margin-bottom: 6px;
+            color: #2c3e50;
+        }
+        
+        .square-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        .square-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .status-forming {
+            background: #fff4e6;
+            color: #e67e22;
+        }
+        
+        /* Bridges to Business Section */
+        .dashboard-bridges {
+            padding: 0 20px;
+            margin-bottom: 28px;
+        }
+        
+        .bridge-item {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+            border-top: 1px solid #f1f2f6;
+        }
+        
+        .bridge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .bridge-info h4 {
+            font-size: 17px;
+            margin-bottom: 4px;
+            color: #2c3e50;
+        }
+        
+        .bridge-location {
+            font-size: 13px;
+            color: #7f8c8d;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .bridge-funding {
+            margin: 15px 0;
+        }
+        
+        .funding-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: #7f8c8d;
+        }
+        
+        .funding-bar {
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .funding-fill {
+            height: 100%;
+            background: #9b59b6;
+            border-radius: 4px;
+            width: 68%;
+        }
+        
+        .bridge-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .bridge-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-pay {
+            background: #d35400;
+            color: white;
+        }
+        
+        .btn-learn {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+        
+        /* Village Growth Section */
+        .dashboard-growth {
+            padding: 0 20px;
+            margin-bottom: 28px;
+        }
+        
+        .growth-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .growth-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+        }
+        
+        .growth-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #d35400;
+        }
+        
+        .growth-number {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .growth-label {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        /* Knowledge Section */
+        .dashboard-knowledge {
+            background: white;
+            margin: 0 20px;
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .knowledge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        
+        .knowledge-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .progress-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: conic-gradient(#2ecc71 82%, #ecf0f1 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        /* Footer */
+        .dashboard-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid #e0e0e0;
+            z-index: 99;
+        }
+        
+        .footer-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+            font-size: 12px;
+            gap: 5px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+        
+        .footer-btn.active, .footer-btn:hover {
+            color: #d35400;
+            background: #fff4e6;
+        }
+        
+        .footer-btn i {
+            font-size: 18px;
+        }
+        
+        /* Disclaimer */
+        .disclaimer {
+            padding: 20px;
+            background: #fff8e1;
+            margin: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #ffc107;
+            font-size: 13px;
+            color: #856404;
+            margin-bottom: 100px;
+        }
+        
+        .disclaimer strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fas fa-square-full logo-icon"></i>
+            <div>
+                <div>Tulo Square</div>
+                <div class="tagline">Your digital village square</div>
+            </div>
+        </div>
+        
+        <nav>
+            <div class="profile-menu">
+                <button id="profileBtn">
+                    <i class="fas fa-user-circle"></i> Chanda ▼
+                </button>
+                
+                <div class="profile-dropdown" id="profileDropdown">
+                    <button onclick="goNotifications()">
+                        <i class="fas fa-bell"></i> Notifications
+                    </button>
+                    <button onclick="goAbout()">
+                        <i class="fas fa-info-circle"></i> About Us
+                    </button>
+                    <button onclick="goRefer()">
+                        <i class="fas fa-gift"></i> Refer & Earn
+                    </button>
+                    <button onclick="goSupport()">
+                        <i class="fas fa-headset"></i> Get Help / Support
+                    </button>
+                    <button onclick="goContact()">
+                        <i class="fas fa-phone-alt"></i> Contact Us
+                    </button>
+                    <hr>
+                    <button id="logoutBtn" class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="dashboard-hero">
+        <h1 id="heroHeading">Welcome back, Chanda!</h1>
+        <p id="heroSubheading">Bridging savings and opportunity in your community</p>
+        <div class="user-location">
+            <i class="fas fa-map-marker-alt"></i> Part of "Kalingalinga Savings Circle" • 12 members
+        </div>
+    </section>
+
+    <!-- DASHBOARD CARDS -->
+    <section class="dashboard-cards">
+        <div class="card-grid">
+            <!-- Personal Savings -->
+            <div class="card card-deposit">
+                <h3><i class="fas fa-piggy-bank"></i> Personal Savings</h3>
+                <div class="card-amount" id="personalSavings">ZMK 18,500</div>
+                <small>Tracked across your accounts & squares</small>
+                <button class="btn-secondary" onclick="goAddAccount()">
+                    <i class="fas fa-plus-circle"></i> Connect Account
+                </button>
+            </div>
+
+            <!-- In Squares -->
+            <div class="card card-earnings">
+                <h3><i class="fas fa-users"></i> In Squares</h3>
+                <div class="card-amount" id="inSquares">ZMK 22,000</div>
+                <small>Active in 2 savings circles</small>
+                <button class="btn-primary" onclick="goSquares()">
+                    <i class="fas fa-eye"></i> View My Squares
+                </button>
+            </div>
+
+            <!-- Square Progress -->
+            <div class="card card-progress">
+                <h3><i class="fas fa-chart-line"></i> Square Progress</h3>
+                <div class="card-amount" id="squareProgress">82%</div>
+                <small>School Fees Square goal: ZMK 120,000</small>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <button class="btn-secondary" onclick="goSquareDetails()">
+                    <i class="fas fa-chart-bar"></i> See Details
+                </button>
+            </div>
+
+            <!-- Community Impact -->
+            <div class="card card-impact">
+                <h3><i class="fas fa-hands-helping"></i> Community Impact</h3>
+                <div class="card-amount" id="communityImpact">3</div>
+                <small>Local businesses supported by your squares</small>
+                <button class="btn-primary" onclick="goImpact()">
+                    <i class="fas fa-heart"></i> See Impact Report
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MY VILLAGE SQUARES -->
+    <section class="dashboard-squares">
+        <div class="section-header">
+            <h2><i class="fas fa-home"></i> My Village Squares</h2>
+            <a href="#" class="view-all" onclick="goAllSquares()">View All</a>
+        </div>
+        
+        <div class="square-item">
+            <div class="square-info">
+                <h4>School Fees Square</h4>
+                <div class="square-meta">
+                    <span><i class="fas fa-bullseye"></i> Goal: ZMK 120,000</span>
+                    <span><i class="fas fa-user-friends"></i> 8/12 members</span>
+                    <span><i class="fas fa-calendar-alt"></i> Next: Jun 15</span>
+                </div>
+            </div>
+            <div class="square-status status-active">Active</div>
+        </div>
+        
+        <div class="square-item">
+            <div class="square-info">
+                <h4>New Business Fund</h4>
+                <div class="square-meta">
+                    <span><i class="fas fa-bullseye"></i> Goal: ZMK 80,000</span>
+                    <span><i class="fas fa-user-friends"></i> 3/8 members</span>
+                    <span><i class="fas fa-store"></i> Mama Grace's Catering</span>
+                </div>
+            </div>
+            <div class="square-status status-forming">Forming</div>
+        </div>
+        
+        <button class="btn-primary" onclick="goCreateSquare()">
+            <i class="fas fa-plus-circle"></i> Start New Square
+        </button>
+    </section>
+
+    <!-- BRIDGES TO BUSINESS -->
+    <section class="dashboard-bridges">
+        <div class="section-header">
+            <h2><i class="fas fa-bridge"></i> Bridges to Business</h2>
+            <a href="#" class="view-all" onclick="goAllBusinesses()">Explore All</a>
+        </div>
+        
+        <div class="bridge-item">
+            <div class="bridge-header">
+                <div class="bridge-info">
+                    <h4>Mama Grace's Catering</h4>
+                    <div class="bridge-location">
+                        <i class="fas fa-map-marker-alt"></i> Lusaka • School meals supplier
+                    </div>
+                </div>
+                <div class="bridge-status">
+                    <span class="square-status status-active">Verified</span>
+                </div>
+            </div>
+            
+            <div class="bridge-funding">
+                <div class="funding-text">
+                    <span>Your square committed: ZMK 15,000</span>
+                    <span>Your share: ZMK 1,875</span>
+                </div>
+                <div class="funding-bar">
+                    <div class="funding-fill"></div>
+                </div>
+                <div class="funding-text">
+                    <span>Supplying 3 local schools</span>
+                    <span>Ready to pay</span>
+                </div>
+            </div>
+            
+            <div class="bridge-actions">
+                <button class="bridge-btn btn-pay" onclick="goPayBusiness()">
+                    <i class="fas fa-money-bill-wave"></i> Pay Business Directly
+                </button>
+                <button class="bridge-btn btn-learn" onclick="goBusinessStory()">
+                    <i class="fas fa-book-open"></i> Learn Their Story
+                </button>
+            </div>
+        </div>
+        
+        <button class="btn-secondary" onclick="goSubmitBusiness()">
+            <i class="fas fa-store-alt"></i> Submit Your Business
+        </button>
+    </section>
+
+    <!-- VILLAGE GROWTH -->
+    <section class="dashboard-growth">
+        <div class="section-header">
+            <h2><i class="fas fa-seedling"></i> Our Village's Growth</h2>
+        </div>
+        
+        <div class="growth-stats">
+            <div class="growth-card">
+                <div class="growth-icon"><i class="fas fa-money-bill-wave"></i></div>
+                <div class="growth-number" id="totalSavings">ZMK 425,800</div>
+                <div class="growth-label">Total in Active Squares</div>
+            </div>
+            
+            <div class="growth-card">
+                <div class="growth-icon"><i class="fas fa-users"></i></div>
+                <div class="growth-number" id="peopleConnected">312</div>
+                <div class="growth-label">People Connected</div>
+            </div>
+            
+            <div class="growth-card">
+                <div class="growth-icon"><i class="fas fa-store"></i></div>
+                <div class="growth-number" id="businessesSupported">23</div>
+                <div class="growth-label">Businesses Supported</div>
+            </div>
+            
+            <div class="growth-card">
+                <div class="growth-icon"><i class="fas fa-graduation-cap"></i></div>
+                <div class="growth-number" id="lessonsCompleted">1,245</div>
+                <div class="growth-label">Lessons Completed</div>
+            </div>
+        </div>
+        
+        <button class="btn-primary" onclick="goVillageReport()" style="margin-top: 20px;">
+            <i class="fas fa-chart-pie"></i> See Full Village Report
+        </button>
+    </section>
+
+    <!-- SQUARE KNOWLEDGE -->
+    <section class="dashboard-knowledge">
+        <div class="knowledge-header">
+            <div>
+                <h3><i class="fas fa-graduation-cap"></i> Square Knowledge</h3>
+                <p style="color: #7f8c8d; font-size: 14px; margin-top: 5px;">
+                    This Week in the Square: "Negotiating as a Group"
+                </p>
+            </div>
+            <div class="knowledge-progress">
+                <div class="progress-circle">82%</div>
+                <div>
+                    <div style="font-weight: 600;">5 min read</div>
+                    <div style="font-size: 12px; color: #7f8c8d;">Completion</div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn-primary" onclick="goLearning()">
+            <i class="fas fa-play-circle"></i> Continue Learning
+        </button>
+        <button class="btn-secondary" onclick="goLearningHub()" style="margin-top: 10px;">
+            <i class="fas fa-university"></i> Visit Learning Square
+        </button>
+    </section>
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+        <strong><i class="fas fa-exclamation-triangle"></i> IMPORTANT:</strong>
+        Tulo Square is a community platform. We do not hold your money or make investments. 
+        All funds move directly between you and your circle or business partners.
+        We are not a bank or regulated financial institution.
+    </div>
+
+    <!-- FOOTER NAVIGATION -->
+    <footer class="dashboard-footer">
+        <button class="footer-btn active" onclick="goHome()">
+            <i class="fas fa-home"></i> Home
+        </button>
+        <button class="footer-btn" onclick="goSquares()">
+            <i class="fas fa-users"></i> Squares
+        </button>
+        <button class="footer-btn" onclick="goBusinesses()">
+            <i class="fas fa-bridge"></i> Bridges
+        </button>
+        <button class="footer-btn" onclick="goLearningHub()">
+            <i class="fas fa-graduation-cap"></i> Learn
+        </button>
+        <button class="footer-btn" onclick="goProfile()">
+            <i class="fas fa-user"></i> Profile
+        </button>
+    </footer>
+
+    <script>
+        // Firebase configuration (Replace with your actual config)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase (uncomment when you add your config)
+        // firebase.initializeApp(firebaseConfig);
+        // const database = firebase.database();
+        
+        // DOM Elements
+        const profileBtn = document.getElementById("profileBtn");
+        const profileDropdown = document.getElementById("profileDropdown");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        // Toggle profile dropdown
+        profileBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            profileDropdown.classList.toggle("show");
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener("click", (e) => {
+            if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                profileDropdown.classList.remove("show");
+            }
+        });
+
+        // Navigation functions
+        function goHome() {
+            console.log("Navigating to Home");
+            // window.location.href = "index.html";
+        }
+
+        function goSquares() {
+            console.log("Navigating to My Squares");
+            // window.location.href = "squares.html";
+        }
+
+        function goBusinesses() {
+            console.log("Navigating to Businesses");
+            // window.location.href = "businesses.html";
+        }
+
+        function goLearningHub() {
+            console.log("Navigating to Learning Hub");
+            // window.location.href = "learning.html";
+        }
+
+        function goProfile() {
+            console.log("Navigating to Profile");
+            // window.location.href = "profile.html";
+        }
+
+        function goNotifications() {
+            console.log("Navigating to Notifications");
+            // window.location.href = "notifications.html";
+        }
+
+        function goAbout() {
+            console.log("Navigating to About Us");
+            // window.location.href = "about.html";
+        }
+
+        function goRefer() {
+            console.log("Navigating to Refer & Earn");
+            // window.location.href = "refer.html";
+        }
+
+        function goSupport() {
+            console.log("Navigating to Support");
+            // window.location.href = "support.html";
+        }
+
+        function goContact() {
+            console.log("Navigating to Contact Us");
+            // window.location.href = "contact.html";
+        }
+
+        function goAllSquares() {
+            console.log("Navigating to All Squares");
+            // window.location.href = "all-squares.html";
+        }
+
+        function goCreateSquare() {
+            console.log("Creating new square");
+            // window.location.href = "create-square.html";
+        }
+
+        function goAllBusinesses() {
+            console.log("Navigating to All Businesses");
+            // window.location.href = "businesses.html";
+        }
+
+        function goPayBusiness() {
+            console.log("Paying business directly");
+            // Implement payment flow
+        }
+
+        function goBusinessStory() {
+            console.log("Viewing business story");
+            // window.location.href = "business-story.html";
+        }
+
+        function goSubmitBusiness() {
+            console.log("Submitting business");
+            // window.location.href = "submit-business.html";
+        }
+
+        function goVillageReport() {
+            console.log("Viewing village report");
+            // window.location.href = "village-report.html";
+        }
+
+        function goLearning() {
+            console.log("Continuing learning");
+            // window.location.href = "lesson.html";
+        }
+
+        function goAddAccount() {
+            console.log("Adding account");
+            // window.location.href = "connect-account.html";
+        }
+
+        function goSquareDetails() {
+            console.log("Viewing square details");
+            // window.location.href = "square-details.html";
+        }
+
+        function goImpact() {
+            console.log("Viewing impact report");
+            // window.location.href = "impact.html";
+        }
+
+        function logout() {
+            console.log("Logging out");
+            // firebase.auth().signOut().then(() => {
+            //     window.location.href = "login.html";
+            // });
+        }
+
+        // Fetch user data from Firebase (example)
+        function fetchUserData() {
+            // Example Firebase data fetching
+            /*
+            const userId = firebase.auth().currentUser.uid;
+            database.ref('users/' + userId).once('value').then((snapshot) => {
+                const userData = snapshot.val();
+                document.getElementById('heroHeading').textContent = `Welcome back, ${userData.name}!`;
+                document.getElementById('personalSavings').textContent = `ZMK ${userData.savings.toLocaleString()}`;
+                // Update other fields...
+            });
+            */
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch user data from Firebase
+            // fetchUserData();
+            
+            // Set active footer button
+            const footerButtons = document.querySelectorAll('.footer-btn');
+            footerButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    footerButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Simulate loading data
+            setTimeout(() => {
+                console.log("Dashboard data loaded");
+            }, 500);
+        });
+    </script>
+</body>
+  </html>
