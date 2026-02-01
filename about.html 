@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us | Tulo Square - Your Digital Village Square</title>
+
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Page-only polish -->
+  <style>
+    :root {
+      --tzf-bg-dark: #0a1f1c;
+      --tzf-orange-main: #d35400;
+      --tzf-orange-light: #e67e22;
+      --tzf-accent-blue: #3498db;
+      --tzf-success: #2ecc71;
+      --tzf-white: #ffffff;
+      --tzf-text-muted: #8fa7a3;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+    }
+
+    body {
+      background: var(--tzf-bg-dark);
+      color: var(--tzf-white);
+      min-height: 100vh;
+    }
+
+    .center { text-align: center; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .narrow {
+      max-width: 800px;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: rgba(10, 31, 28, 0.98);
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--tzf-orange-main);
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--tzf-text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--tzf-orange-main);
+    }
+
+    .btn-primary {
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--tzf-orange-light), var(--tzf-orange-main));
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
+    }
+
+    /* HERO */
+    .hero {
+      padding: 80px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(211, 84, 0, 0.1), rgba(52, 152, 219, 0.1));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      color: var(--tzf-orange-main);
+      margin-bottom: 20px;
+    }
+
+    .hero .tagline {
+      font-size: 1.3rem;
+      color: var(--tzf-accent-blue);
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+
+    .hero p {
+      max-width: 800px;
+      margin: 0 auto;
+      color: var(--tzf-text-muted);
+      font-size: 1.1rem;
+    }
+
+    /* SECTIONS */
+    .section {
+      padding: 80px 0;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      color: var(--tzf-orange-main);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .section-text {
+      font-size: 1.1rem;
+      color: var(--tzf-text-muted);
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    /* CARD GRID */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 28px 24px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform .25s ease, box-shadow .25s ease;
+      backdrop-filter: blur(6px);
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 34px rgba(0,0,0,0.3);
+      border-color: var(--tzf-orange-main);
+    }
+
+    .card i {
+      font-size: 32px;
+      color: var(--tzf-orange-main);
+      margin-bottom: 14px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .card p {
+      font-size: 15px;
+      color: var(--tzf-text-muted);
+      line-height: 1.6;
+    }
+
+    .soft-bg {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* BRIDGE VISUAL */
+    .bridge-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 40px 0;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .bridge-node {
+      background: rgba(0,0,0,0.3);
+      border: 2px solid var(--tzf-orange-main);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      min-width: 150px;
+    }
+
+    .bridge-connector {
+      font-size: 2.5em;
+      color: var(--tzf-accent-blue);
+    }
+
+    /* FOUNDERS SECTION */
+    .founders {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .founder-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s, border-color 0.3s;
+    }
+
+    .founder-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--tzf-orange-main);
+    }
+
+    .founder-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .founder-img {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 3px solid var(--tzf-orange-main);
+    }
+
+    .founder-info h3 {
+      color: var(--tzf-orange-main);
+      margin-bottom: 5px;
+    }
+
+    .founder-role {
+      color: var(--tzf-accent-blue);
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .linkedin-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #0077b5;
+      color: white;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: transform 0.2s;
+    }
+
+    .linkedin-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* CTA */
+    .cta {
+      background: linear-gradient(135deg, var(--tzf-orange-main), var(--tzf-orange-light));
+      color: white;
+      padding: 70px 20px;
+      text-align: center;
+      border-radius: 20px;
+      margin: 60px auto;
+      max-width: 1000px;
+    }
+
+    .cta h2 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+
+    .cta .btn-primary {
+      background: white;
+      color: var(--tzf-orange-main);
+      padding: 14px 28px;
+      font-size: 1rem;
+    }
+
+    .cta .btn-primary:hover {
+      background: #f0f0f0;
+    }
+
+    /* FOOTER */
+    .footer {
+      padding: 40px 20px;
+      background: rgba(0,0,0,0.3);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .footer-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .footer p {
+      margin: 8px 0;
+      color: var(--tzf-text-muted);
+    }
+
+    .disclaimer {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+      max-width: 760px;
+      margin: 12px auto 0;
+      padding: 15px;
+      background: rgba(255, 193, 7, 0.1);
+      border-left: 4px solid #ffc107;
+      border-radius: 8px;
+    }
+
+    /* PILL BADGES */
+    .pill {
+      display: inline-block;
+      background: rgba(211, 84, 0, 0.2);
+      color: var(--tzf-orange-main);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      margin: 5px;
+      border: 1px solid rgba(211, 84, 0, 0.4);
+    }
+
+    /* LEADERSHIP */
+    .leadership-hierarchy {
+      max-width: 900px;
+      margin: 40px auto;
+      text-align: center;
+    }
+
+    .hierarchy-level {
+      margin: 20px 0;
+    }
+
+    .level-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 20px;
+      color: white;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .founder-council {
+      background: var(--tzf-success);
+    }
+
+    .executive-management {
+      background: var(--tzf-orange-main);
+    }
+
+    .operations-team {
+      background: var(--tzf-accent-blue);
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+      }
+
+      .founder-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .bridge-visual {
+        flex-direction: column;
+      }
+
+      nav {
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="logo">🌉 Tulo Square</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html" class="active">About</a>
+      <a href="how-it-works.html">How It Works</a>
+      <a href="register.html" class="btn-primary">Join Waitlist</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container center">
+    <h1>Building Bridges in Zambian Communities</h1>
+    <div class="tagline">Your digital village square, bridging savings and opportunity</div>
+    
+    <div class="bridge-visual">
+      <div class="bridge-node">
+        <strong>Community Savings</strong>
+        <p>Circles saving together</p>
+      </div>
+      <div class="bridge-connector">🌉</div>
+      <div class="bridge-node">
+        <strong>Local Opportunity</strong>
+        <p>Businesses growing together</p>
+      </div>
+    </div>
+    
+    <p>
+      Tulo Square is a Zambian-built community coordination platform that helps communities 
+      save together digitally, support local businesses transparently, and learn about finance 
+      collectively — all while keeping money and decisions within the community.
+    </p>
+  </div>
+</section>
+
+<!-- WHO WE ARE -->
+<section class="section">
+  <div class="container narrow center">
+    <h2 class="section-title">Who We Are</h2>
+    <p class="section-text">
+      Tulo Square is your digital village square — a community coordination platform 
+      where Zambians save together, support local businesses, learn about finance, 
+      and track collective growth. "Tulo" means bridge in several Zambian languages, 
+      representing our mission to connect community savings with local opportunity.
+    </p>
+    
+    <div style="margin-top: 30px;">
+      <span class="pill">Community-First</span>
+      <span class="pill">Not a Bank</span>
+      <span class="pill">Digital Bridge</span>
+      <span class="pill">Education Focused</span>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION / VISION / VALUES -->
+<section class="section soft-bg">
+  <div class="container">
+    <div class="card-grid">
+
+      <div class="card center">
+        <i class="fa-solid fa-bullseye"></i>
+        <h3>Our Mission</h3>
+        <p>
+          To empower Zambian communities with digital tools for transparent 
+          savings, local business support, and collective financial growth.
+        </p>
+      </div>
+
+      <div class="card center">
+        <i class="fa-solid fa-eye"></i>
+        <h3>Our Vision</h3>
+        <p>
+          A Zambia where every community has its own digital village square — 
+          bridging savings with opportunity, digitally and transparently.
+        </p>
+      </div>
+
+      <div class="card center">
+        <i class="fa-solid fa-handshake"></i>
+        <h3>Our Values</h3>
+        <p>
+          Community trust, transparency, collective growth, 
+          local empowerment, and digital accessibility.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHY TULO SQUARE -->
+<section class="section">
+  <div class="container center">
+    <h2 class="section-title">Why Tulo Square</h2>
+
+    <div class="card-grid">
+
+      <div class="card">
+        <i class="fa-solid fa-users"></i>
+        <h3>Community-First Design</h3>
+        <p>Built for Zambian communities, understanding local practices like chilimba and stokvel.</p>
+      </div>
+
+      <div class="card">
+        <i class="fa-solid fa-scale-balanced"></i>
+        <h3>Clear Legal Position</h3>
+        <p>Registered as a community coordination platform, not a financial institution.</p>
+      </div>
+
+      <div class="card">
+        <i class="fa-solid fa-bridge"></i>
+        <h3>Bridge, Not Bank</h3>
+        <p>We connect communities with businesses — we don't hold funds or make investments.</p>
+      </div>
+
+      <div class="card">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <h3>Education Focused</h3>
+        <p>Financial learning modules designed for community understanding and growth.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- LEADERSHIP HIERARCHY -->
+<section class="section soft-bg">
+  <div class="container center">
+    <h2 class="section-title">Our Community Structure</h2>
+    <p class="section-text">
+      Tulo Square operates as a community coordination platform with clear 
+      governance focused on community benefit and transparent operations.
+    </p>
+    
+    <div class="leadership-hierarchy">
+      <div class="hierarchy-level">
+        <div class="level-badge founder-council">Community Council</div>
+        <p>Strategic guidance and community alignment</p>
+      </div>
+      
+      <div style="font-size: 24px; color: var(--tzf-orange-main); margin: 10px 0;">▼</div>
+      
+      <div class="hierarchy-level">
+        <div class="level-badge executive-management">Platform Team</div>
+        <p>Platform development and community support</p>
+      </div>
+      
+      <div style="font-size: 24px; color: var(--tzf-orange-main); margin: 10px 0;">▼</div>
+      
+      <div class="hierarchy-level">
+        <div class="level-badge operations-team">Community Moderators</div>
+        <p>Community guidance and support coordination</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDERS -->
+<section class="section">
+  <div class="container center">
+    <h2 class="section-title">Community Builders</h2>
+    <p class="section-text" style="margin-bottom: 40px;">
+      Tulo Square is built by Zambians passionate about community empowerment 
+      and digital tools that keep wealth within local communities.
+    </p>
+
+    <div class="founders">
+      <!-- Mwaba Lewis -->
+      <div class="founder-card">
+        <div class="founder-header">
+          <img src="http://afrileapcapital.com/wp-content/uploads/2025/06/cropped-1713948169242.jpg" 
+               alt="Mwaba Lewis" class="founder-img">
+          <div class="founder-info">
+            <h3>Mwaba Lewis</h3>
+            <div class="founder-role">Platform Builder & Community Coordinator</div>
+            <p style="color: var(--tzf-text-muted); font-size: 0.95rem;">
+              Lewis focuses on building community coordination tools and transparent 
+              systems that empower Zambian communities to save and grow together.
+            </p>
+            <a href="https://www.linkedin.com/in/mwaba-lewis-77a738134" target="_blank" 
+               class="linkedin-btn">
+              <i class="fab fa-linkedin"></i> Connect
+            </a>
+          </div>
+        </div>
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+          <p style="color: var(--tzf-text-muted);">
+            "Tulo Square is about giving communities digital tools for what they already do well — 
+            saving together and supporting each other. We're just making it more transparent and 
+            connected."
+          </p>
+        </div>
+      </div>
+
+      <!-- Lorna Moffat -->
+      <div class="founder-card">
+        <div class="founder-header">
+          <img src="http://afrileapcapital.com/wp-content/uploads/2025/12/IMG-20251230-WA0000.jpg" 
+               alt="Lorna Moffat" class="founder-img">
+          <div class="founder-info">
+            <h3>Lorna Moffat</h3>
+            <div class="founder-role">Community Operations Lead</div>
+            <p style="color: var(--tzf-text-muted); font-size: 0.95rem;">
+              Lorna ensures our platform serves community needs first, focusing on 
+              accessible design and clear communication for all Zambian communities.
+            </p>
+            <a href="#" class="linkedin-btn" style="background: #666;">
+              <i class="fab fa-linkedin"></i> Connect
+            </a>
+          </div>
+        </div>
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+          <p style="color: var(--tzf-text-muted);">
+            "Every community deserves transparent tools for managing their collective resources. 
+            Tulo Square is that digital meeting place where trust is built through transparency."
+          </p>
+        </div>
+      </div>
+
+      <!-- Rajarshi Banerjee -->
+      <div class="founder-card">
+        <div class="founder-header">
+          <img src="http://afrileapcapital.com/wp-content/uploads/2026/01/Rajarshi-photo-.jpg" 
+               alt="Rajarshi Banerjee" class="founder-img">
+          <div class="founder-info">
+            <h3>Rajarshi Banerjee</h3>
+            <div class="founder-role">Community Finance Advisor</div>
+            <p style="color: var(--tzf-text-muted); font-size: 0.95rem;">
+              Brings experience in community-focused financial systems, ensuring our 
+              tools promote sustainable community growth and transparent coordination.
+            </p>
+            <a href="#" class="linkedin-btn" style="background: #666;">
+              <i class="fab fa-linkedin"></i> Connect
+            </a>
+          </div>
+        </div>
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+          <p style="color: var(--tzf-text-muted);">
+            "True community empowerment happens when people have transparent tools to manage 
+            their collective resources. Tulo Square provides that digital infrastructure."
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEGAL POSITION -->
+<section class="section soft-bg">
+  <div class="container narrow center">
+    <h2 class="section-title">Our Legal Position</h2>
+    <div class="disclaimer" style="margin-top: 20px;">
+      <p><strong>⚠️ Important:</strong> Tulo Square is registered with PACRA as a community 
+      coordination platform. We are not a bank, investment platform, or financial institution. 
+      We do not accept deposits, make investments, or provide financial advice. We are the 
+      digital bridge connecting communities with opportunities — not the destination where 
+      money is kept or invested.</p>
+    </div>
+    
+    <div style="margin-top: 30px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+      <div style="text-align: center;">
+        <div style="font-size: 2rem; color: var(--tzf-success); margin-bottom: 10px;">✅</div>
+        <div style="font-weight: 600;">Community Coordination</div>
+        <div style="font-size: 0.9rem; color: var(--tzf-text-muted);">Our core service</div>
+      </div>
+      
+      <div style="text-align: center;">
+        <div style="font-size: 2rem; color: #e74c3c; margin-bottom: 10px;">🚫</div>
+        <div style="font-weight: 600;">Not a Bank</div>
+        <div style="font-size: 0.9rem; color: var(--tzf-text-muted);">No deposits or banking</div>
+      </div>
+      
+      <div style="text-align: center;">
+        <div style="font-size: 2rem; color: #e74c3c; margin-bottom: 10px;">🚫</div>
+        <div style="font-weight: 600;">Not Investment Platform</div>
+        <div style="font-size: 0.9rem; color: var(--tzf-text-muted);">No securities or investments</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="container">
+  <div class="cta">
+    <h2>Join Zambian Communities Building Together</h2>
+    <p style="margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+      Be part of the digital village square where communities save, learn, 
+      and grow together — transparently and responsibly.
+    </p>
+    <a href="register.html" class="btn-primary">Join the Waitlist</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <p>© 2025 Tulo Square. All rights reserved.</p>
+    <div class="disclaimer">
+      Tulo Square is a community coordination platform registered with PACRA. 
+      We do not accept deposits, make investments, or provide financial services. 
+      We are the digital bridge connecting communities with opportunities.
+    </div>
+    <p style="margin-top: 20px;">
+      <a href="index.html" style="color: var(--tzf-orange-main); margin: 0 10px;">Home</a> | 
+      <a href="how-it-works.html" style="color: var(--tzf-orange-main); margin: 0 10px;">How It Works</a> | 
+      <a href="contact.html" style="color: var(--tzf-orange-main); margin: 0 10px;">Contact</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
