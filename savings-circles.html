@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tulo Square | Village Savings Circles</title>
+
+  <style>
+    :root {
+      --tzf-bg-dark: #0a1f1c;        /* Deep green background */
+      --tzf-orange-main: #d35400;    /* Primary brand orange */
+      --tzf-orange-light: #e67e22;   /* Highlights / hover */
+      --tzf-accent-blue: #3498db;    /* Bridge accent */
+      --tzf-text-dark: #0a2540;
+      --tzf-text-muted: #8fa7a3;
+      --tzf-white: #ffffff;
+      --tzf-success: #2ecc71;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+    }
+
+    body {
+      background: linear-gradient(160deg, var(--tzf-bg-dark), #06201c);
+      color: var(--tzf-white);
+      min-height: 100vh;
+    }
+
+    .page-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px 80px;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      font-size: 2.6rem;
+      margin-bottom: 12px;
+      color: var(--tzf-orange-main);
+    }
+
+    .page-header .tagline {
+      font-size: 1.3rem;
+      color: var(--tzf-accent-blue);
+      margin: 10px 0 30px;
+      font-style: italic;
+    }
+
+    .page-header p {
+      max-width: 720px;
+      margin: 0 auto 50px;
+      color: var(--tzf-text-muted);
+      font-size: 1.05rem;
+    }
+
+    .circles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px;
+    }
+
+    .circle-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 18px;
+      padding: 30px 24px 34px;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.35s ease, box-shadow 0.35s ease, border 0.35s ease;
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .circle-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--tzf-orange-main);
+    }
+
+    .circle-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--tzf-orange-light), var(--tzf-orange-main));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+
+    .circle-card h3 {
+      margin-bottom: 12px;
+      font-size: 1.25rem;
+      color: var(--tzf-white);
+    }
+
+    .circle-card p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--tzf-text-muted);
+      margin-bottom: 22px;
+      flex-grow: 1;
+    }
+
+    .circle-meta {
+      font-size: 0.85rem;
+      color: #b8d6d0;
+      margin-bottom: 18px;
+      background: rgba(0,0,0,0.2);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border-left: 3px solid var(--tzf-orange-main);
+    }
+
+    .join-btn {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--tzf-orange-light), var(--tzf-orange-main));
+      color: var(--tzf-white);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .join-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(211, 84, 0, 0.3);
+    }
+
+    .coming-soon {
+      opacity: 0.8;
+    }
+
+    .coming-soon .join-btn {
+      background: rgba(255, 255, 255, 0.15);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .coming-soon .join-btn:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Bridge Visualization */
+    .bridge-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 40px 0;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .bridge-node {
+      background: rgba(0,0,0,0.3);
+      border: 2px solid var(--tzf-orange-main);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      min-width: 150px;
+    }
+
+    .bridge-connector {
+      font-size: 2.5em;
+      color: var(--tzf-accent-blue);
+    }
+
+    /* How It Works */
+    .how-it-works {
+      max-width: 800px;
+      margin: 60px auto;
+      text-align: left;
+      background: rgba(255,255,255,0.05);
+      padding: 30px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .how-it-works h2 {
+      text-align: center;
+      color: var(--tzf-orange-main);
+      margin-bottom: 25px;
+    }
+
+    .step {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 25px;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      background: var(--tzf-orange-main);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    /* Pill Badges */
+    .pill {
+      display: inline-block;
+      background: rgba(211, 84, 0, 0.2);
+      color: var(--tzf-orange-main);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      margin: 5px;
+      border: 1px solid rgba(211, 84, 0, 0.4);
+    }
+
+    /* Call to Action */
+    .cta-section {
+      margin-top: 60px;
+      padding: 40px;
+      background: linear-gradient(135deg, rgba(211, 84, 0, 0.1), rgba(52, 152, 219, 0.1));
+      border-radius: 18px;
+      border: 1px solid rgba(211, 84, 0, 0.3);
+    }
+
+    @media (max-width: 600px) {
+      .page-header h1 {
+        font-size: 2.1rem;
+      }
+
+      .page-wrapper {
+        padding-top: 40px;
+      }
+
+      .step {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .step-number {
+        margin: 0 auto;
+      }
+
+      .bridge-visual {
+        flex-direction: column;
+      }
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="page-wrapper">
+
+    <div class="page-header">
+      <h1>Village Savings Circles</h1>
+      <div class="tagline">Your digital village square for saving together</div>
+      <p>
+        Modern digital tools for traditional community savings (chilimba/stokvel).
+        Save together with people you trust, track progress transparently, and build stronger communities.
+      </p>
+      
+      <div class="bridge-visual">
+        <div class="bridge-node">
+          <strong>Community Savings</strong>
+          <p>Circles saving together</p>
+        </div>
+        <div class="bridge-connector">🌉</div>
+        <div class="bridge-node">
+          <strong>Collective Growth</strong>
+          <p>Shared goals achieved</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="circles-grid">
+
+      <div class="circle-card">
+        <div class="circle-icon">👨‍👩‍👧‍👦</div>
+        <h3>Family & Friends Circle</h3>
+        <p>
+          A private savings circle for people who already know and trust each other.
+          Perfect for families saving for school fees, weddings, or emergency funds.
+        </p>
+        <div class="circle-meta">• Min 3 members • Flexible contributions • Private group</div>
+        <button class="join-btn" onclick="startCircle('family')">Start a Family Circle</button>
+      </div>
+
+      <div class="circle-card">
+        <div class="circle-icon">🏪</div>
+        <h3>Market & Business Circle</h3>
+        <p>
+          For market vendors, small business owners, and hustlers saving for inventory,
+          equipment, or business expansion. Grow your business with community support.
+        </p>
+        <div class="circle-meta">• Min 5 members • Weekly/Monthly • Business-focused</div>
+        <button class="join-btn" onclick="startCircle('business')">Start a Market Circle</button>
+      </div>
+
+      <div class="circle-card">
+        <div class="circle-icon">⛪</div>
+        <h3>Church & Community Circle</h3>
+        <p>
+          Designed for church groups, community organizations, and associations.
+          Save together for community projects, member support, or collective goals.
+        </p>
+        <div class="circle-meta">• Any group size • Structured contributions • Community-led</div>
+        <button class="join-btn" onclick="startCircle('church')">Start a Community Circle</button>
+      </div>
+
+      <div class="circle-card coming-soon">
+        <div class="circle-icon">🌉</div>
+        <h3>Bridge Builder Circle</h3>
+        <p>
+          Connect your savings circle directly with local businesses.
+          Save together while supporting community businesses with pre-purchases or group funding.
+        </p>
+        <div class="circle-meta">• Business connections • Impact tracking • Community rewards</div>
+        <button class="join-btn">Coming Soon</button>
+      </div>
+
+    </div>
+
+    <div class="how-it-works">
+      <h2>How Digital Savings Circles Work</h2>
+      
+      <div class="step">
+        <div class="step-number">1</div>
+        <div>
+          <h3 style="color: var(--tzf-white); margin-bottom: 8px;">Create Your Circle</h3>
+          <p style="color: var(--tzf-text-muted);">Choose a circle type, set a goal, and invite members. Give it a meaningful name like "Mwaba Family School Fund".</p>
+        </div>
+      </div>
+      
+      <div class="step">
+        <div class="step-number">2</div>
+        <div>
+          <h3 style="color: var(--tzf-white); margin-bottom: 8px;">Set Community Agreements</h3>
+          <p style="color: var(--tzf-text-muted);">Use our templates to create fair rules for contributions, decision-making, and withdrawals. Everyone agrees transparently.</p>
+        </div>
+      </div>
+      
+      <div class="step">
+        <div class="step-number">3</div>
+        <div>
+          <h3 style="color: var(--tzf-white); margin-bottom: 8px;">Save Together Digitally</h3>
+          <p style="color: var(--tzf-text-muted);">Members contribute via mobile money (directly to each other). The platform tracks all contributions transparently for everyone to see.</p>
+        </div>
+      </div>
+      
+      <div class="step">
+        <div class="step-number">4</div>
+        <div>
+          <h3 style="color: var(--tzf-white); margin-bottom: 8px;">Achieve Goals & Grow</h3>
+          <p style="color: var(--tzf-text-muted);">Watch your community savings grow. When goals are met, funds are distributed according to your community agreements.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <h2 style="color: var(--tzf-orange-main); text-align: center; margin-bottom: 20px;">Ready to Start Your Village Savings Circle?</h2>
+      <p style="text-align: center; color: var(--tzf-text-muted); max-width: 600px; margin: 0 auto 30px;">
+        Join Zambian families, market associations, church groups, and communities
+        building financial resilience together through our digital village square.
+      </p>
+      
+      <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <button class="join-btn" onclick="window.location.href='get-started.html'" style="width: auto; padding: 12px 30px;">Start a Circle Now</button>
+        <button class="join-btn" onclick="window.location.href='how-it-works.html'" style="width: auto; padding: 12px 30px; background: transparent; border: 2px solid var(--tzf-orange-main);">Learn More First</button>
+      </div>
+      
+      <p style="text-align: center; margin-top: 20px; font-size: 0.9em; color: var(--tzf-text-muted);">
+        <span class="pill">Not a bank</span>
+        <span class="pill">Community-first</span>
+        <span class="pill">Mobile money friendly</span>
+        <span class="pill">Transparent tracking</span>
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    function startCircle(type) {
+      // In a real implementation, this would navigate to circle creation flow
+      const circleTypes = {
+        'family': 'Family & Friends Circle',
+        'business': 'Market & Business Circle', 
+        'church': 'Church & Community Circle'
+      };
+      
+      alert('Starting a ' + circleTypes[type] + '\n\nIn the full platform, you would:\n1. Name your circle\n2. Set community agreements\n3. Invite members\n4. Start saving together\n\nAll funds move directly between members via mobile money.');
+      
+      // For demo purposes
+      // window.location.href = 'create-circle.html?type=' + type;
+    }
+    
+    // Add some interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+      const circleCards = document.querySelectorAll('.circle-card:not(.coming-soon)');
+      circleCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+          if (!e.target.classList.contains('join-btn')) {
+            this.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+              this.style.transform = '';
+            }, 200);
+          }
+        });
+      });
+      
+      // Add FontAwesome for icons
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+      document.head.appendChild(link);
+    });
+  </script>
+
+</body>
+</html>
