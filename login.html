@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | Tulo Square - Your Digital Village Square</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* === TULO SQUARE LOGIN PAGE === */
+    :root {
+      --tzf-bg-dark: #0a1f1c;
+      --tzf-orange-main: #d35400;
+      --tzf-orange-light: #e67e22;
+      --tzf-accent-blue: #3498db;
+      --tzf-text-muted: #8fa7a3;
+      --tzf-white: #ffffff;
+      --tzf-success: #2ecc71;
+      --tzf-error: #e74c3c;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(160deg, var(--tzf-bg-dark), #06201c);
+      color: var(--tzf-white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: rgba(10, 31, 28, 0.98);
+      padding: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--tzf-orange-main);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      font-size: 1.8rem;
+    }
+
+    nav a {
+      color: var(--tzf-text-muted);
+      text-decoration: none;
+      margin-left: 25px;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--tzf-orange-main);
+    }
+
+    /* HERO */
+    .auth-hero {
+      padding: 60px 20px 40px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .auth-hero h1 {
+      font-size: 2.5rem;
+      color: var(--tzf-orange-main);
+      margin-bottom: 15px;
+    }
+
+    .auth-hero .tagline {
+      font-size: 1.3rem;
+      color: var(--tzf-accent-blue);
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .auth-hero p {
+      color: var(--tzf-text-muted);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .bridge-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 30px 0;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .bridge-node {
+      background: rgba(0,0,0,0.3);
+      border: 2px solid var(--tzf-orange-main);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      min-width: 150px;
+    }
+
+    .bridge-connector {
+      font-size: 2.5em;
+      color: var(--tzf-accent-blue);
+    }
+
+    /* AUTH CARD */
+    .auth-wrapper {
+      max-width: 500px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
+    }
+
+    .auth-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 18px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .auth-card h2 {
+      color: var(--tzf-orange-main);
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 1.8rem;
+    }
+
+    /* FORM INPUTS */
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--tzf-text-muted);
+      font-size: 0.95rem;
+    }
+
+    .input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--tzf-white);
+      font-size: 1rem;
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    .input:focus {
+      outline: none;
+      border-color: var(--tzf-orange-main);
+      box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.2);
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .toggle-eye {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--tzf-text-muted);
+      font-size: 1.2rem;
+    }
+
+    .toggle-eye:hover {
+      color: var(--tzf-orange-main);
+    }
+
+    /* BUTTON */
+    .primary-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--tzf-orange-light), var(--tzf-orange-main));
+      color: white;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(211, 84, 0, 0.3);
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* MESSAGES */
+    .error-text {
+      color: var(--tzf-error);
+      background: rgba(231, 76, 60, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border-left: 4px solid var(--tzf-error);
+      display: none;
+    }
+
+    .success-text {
+      color: var(--tzf-success);
+      background: rgba(46, 204, 113, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border-left: 4px solid var(--tzf-success);
+      display: none;
+    }
+
+    /* FOOTER & LINKS */
+    .auth-links {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .auth-link {
+      color: var(--tzf-orange-main);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .auth-link:hover {
+      text-decoration: underline;
+    }
+
+    .auth-switch {
+      text-align: center;
+      margin-top: 25px;
+      color: var(--tzf-text-muted);
+    }
+
+    .auth-switch a {
+      color: var(--tzf-orange-main);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .auth-switch a:hover {
+      text-decoration: underline;
+    }
+
+    .auth-footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--tzf-text-muted);
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: auto;
+    }
+
+    /* DEMO CREDENTIALS */
+    .demo-credentials {
+      background: rgba(52, 152, 219, 0.1);
+      border-left: 4px solid var(--tzf-accent-blue);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+
+    .demo-credentials h4 {
+      color: var(--tzf-accent-blue);
+      margin-bottom: 10px;
+    }
+
+    /* SOCIAL LOGIN */
+    .social-login {
+      margin-top: 25px;
+      text-align: center;
+    }
+
+    .social-divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      color: var(--tzf-text-muted);
+    }
+
+    .social-divider::before,
+    .social-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .social-divider span {
+      padding: 0 15px;
+    }
+
+    .social-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .social-btn {
+      padding: 12px 20px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+
+    .social-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .auth-hero h1 {
+        font-size: 2rem;
+      }
+      
+      .auth-card {
+        padding: 30px 20px;
+      }
+      
+      .navbar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      
+      nav {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      nav a {
+        margin-left: 0;
+      }
+      
+      .auth-links {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .social-buttons {
+        flex-direction: column;
+      }
+      
+      .bridge-visual {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <a href="index.html" class="logo">
+    <span class="logo-icon">🌉</span>
+    <span>Tulo Square</span>
+  </a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="how-it-works.html">How It Works</a>
+    <a href="about.html">About</a>
+    <a href="register.html">Join</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="auth-hero">
+  <h1>Welcome Back to Your Village Square</h1>
+  <div class="tagline">Reconnect with your community savings and opportunities</div>
+  
+  <div class="bridge-visual">
+    <div class="bridge-node">
+      <strong>Your Community</strong>
+      <p>Savings circles & members</p>
+    </div>
+    <div class="bridge-connector">🌉</div>
+    <div class="bridge-node">
+      <strong>Local Opportunities</strong>
+      <p>Businesses & growth</p>
+    </div>
+  </div>
+  
+  <p>
+    Log in to access your community savings circles, track progress, 
+    connect with local businesses, and continue your financial learning journey.
+  </p>
+</section>
+
+<!-- LOGIN CARD -->
+<div class="auth-wrapper">
+  <form id="loginForm" class="auth-card">
+    <h2>Login to Tulo Square</h2>
+    
+    <div class="demo-credentials">
+      <h4><i class="fas fa-info-circle"></i> Testing the platform?</h4>
+      <p>Use: <strong>demo@tulosquare.com</strong> / <strong>demo123</strong></p>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Email Address</label>
+      <input class="input" id="loginEmail" type="email" placeholder="your.email@example.com" required />
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Password</label>
+      <div class="password-wrap">
+        <input class="input" id="loginPassword" type="password" placeholder="Enter your password" required />
+        <span class="toggle-eye" onclick="togglePassword('loginPassword')">
+          <i class="fas fa-eye"></i>
+        </span>
+      </div>
+    </div>
+
+    <div id="loginError" class="error-text"></div>
+    <div id="loginSuccess" class="success-text"></div>
+
+    <div class="auth-links">
+      <a href="forgot-password.html" class="auth-link">
+        <i class="fas fa-key"></i> Forgot Password?
+      </a>
+      <a href="resend-verification.html" class="auth-link">
+        <i class="fas fa-envelope"></i> Resend Verification
+      </a>
+    </div>
+
+    <button type="submit" class="primary-btn" id="loginBtn">
+      <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+    </button>
+
+    <div class="social-divider">
+      <span>Or continue with</span>
+    </div>
+
+    <div class="social-buttons">
+      <button type="button" class="social-btn" onclick="loginWithGoogle()">
+        <i class="fab fa-google"></i> Google
+      </button>
+      <button type="button" class="social-btn" onclick="loginWithPhone()">
+        <i class="fas fa-mobile-alt"></i> Phone
+      </button>
+    </div>
+
+    <p class="auth-switch">
+      New to Tulo Square?
+      <a href="register.html">Join your digital village square</a>
+    </p>
+  </form>
+</div>
+
+<footer class="auth-footer">
+  <p>© 2025 Tulo Square. Your digital village square, bridging savings and opportunity.</p>
+  <p style="margin-top: 10px; font-size: 0.8rem; color: rgba(255,255,255,0.6);">
+    Tulo Square is a community coordination platform. We are not a bank or financial institution.
+  </p>
+</footer>
+
+<script>
+  // Password toggle function
+  function togglePassword(id) {
+    const input = document.getElementById(id);
+    const eyeIcon = input.parentElement.querySelector('.fa-eye');
+    if (input.type === "password") {
+      input.type = "text";
+      eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+      input.type = "password";
+      eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+  }
+
+  // Demo credentials auto-fill
+  function fillDemoCredentials() {
+    document.getElementById('loginEmail').value = 'demo@tulosquare.com';
+    document.getElementById('loginPassword').value = 'demo123';
+  }
+</script>
+
+<!-- Firebase and Auth Scripts -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+
+<!-- Your Firebase Config -->
+<script src="firebase-config.js"></script>
+
+<!-- Login Logic -->
+<script>
+  // Wait for DOM and Firebase to load
+  document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorDiv = document.getElementById('loginError');
+    const successDiv = document.getElementById('loginSuccess');
+    
+    if (!loginForm) return;
+    
+    // Check if user is already logged in
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        // User is already logged in, redirect to dashboard
+        window.location.href = 'dashboard.html';
+      }
+    });
+    
+    // Auto-fill demo credentials (for testing)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('demo') === 'true') {
+      fillDemoCredentials();
+    }
+    
+    loginForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      // Get form values
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      // Basic validation
+      if (!email || !password) {
+        showError('Please enter both email and password');
+        return;
+      }
+      
+      // Disable button and show loading
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+      
+      try {
+        // 1. Sign in with Firebase Authentication
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // 2. Update last login timestamp in database
+        await firebase.database().ref('users/' + user.uid + '/lastLogin').set(
+          firebase.database.ServerValue.TIMESTAMP
+        );
+        
+        // Show success message
+        showSuccess('Login successful! Redirecting to your dashboard...');
+        
+        // Redirect to dashboard after 1 second
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1000);
+        
+      } catch (error) {
+        // Handle errors
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login to Dashboard';
+        
+        let errorMessage = 'Login failed. ';
+        
+        switch (error.code) {
+          case 'auth/user-not-found':
+          case 'auth/wrong-password':
+            errorMessage += 'Invalid email or password.';
+            break;
+          case 'auth/invalid-email':
+            errorMessage += 'Invalid email address format.';
+            break;
+          case 'auth/user-disabled':
+            errorMessage += 'This account has been disabled.';
+            break;
+          case 'auth/too-many-requests':
+            errorMessage += 'Too many failed attempts. Try again later.';
+            break;
+          case 'auth/network-request-failed':
+            errorMessage += 'Network error. Please check your connection.';
+            break;
+          default:
+            errorMessage += error.message;
+        }
+        
+        showError(errorMessage);
+      }
+    });
+    
+    // Social login functions (to be implemented)
+    window.loginWithGoogle = function() {
+      showError('Google login coming soon. Please use email/password for now.');
+    };
+    
+    window.loginWithPhone = function() {
+      showError('Phone login coming soon. Please use email/password for now.');
+    };
+    
+    function showError(message) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      successDiv.style.display = 'none';
+      
+      // Auto-hide error after 5 seconds
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 5000);
+    }
+    
+    function showSuccess(message) {
+      successDiv.textContent = message;
+      successDiv.style.display = 'block';
+      errorDiv.style.display = 'none';
+    }
+  });
+</script>
+
+</body>
+</html>
