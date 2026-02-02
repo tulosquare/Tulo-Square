@@ -236,7 +236,8 @@
             height: 100%;
             background: #2ecc71;
             border-radius: 4px;
-            width: 65%;
+            width: 0%; /* Will be updated dynamically */
+            transition: width 1s ease-in-out;
         }
         
         .btn-primary {
@@ -401,7 +402,8 @@
             height: 100%;
             background: #9b59b6;
             border-radius: 4px;
-            width: 68%;
+            width: 0%; /* Will be updated dynamically */
+            transition: width 1s ease-in-out;
         }
         
         .bridge-actions {
@@ -496,7 +498,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: conic-gradient(#2ecc71 82%, #ecf0f1 0%);
+            background: conic-gradient(#2ecc71 0%, #ecf0f1 0%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -559,9 +561,46 @@
             display: block;
             margin-bottom: 5px;
         }
+
+        /* Loading State */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #d35400;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div style="color: #d35400; font-weight: 600; font-size: 18px;">Loading your Tulo Square...</div>
+        <div style="color: #7f8c8d; font-size: 14px;">Welcome back to your village square</div>
+    </div>
+
     <!-- NAVBAR -->
     <header class="navbar">
         <div class="logo">
@@ -575,7 +614,7 @@
         <nav>
             <div class="profile-menu">
                 <button id="profileBtn">
-                    <i class="fas fa-user-circle"></i> Chanda ▼
+                    <i class="fas fa-user-circle"></i> <span id="userFirstName">Loading...</span> ▼
                 </button>
                 
                 <div class="profile-dropdown" id="profileDropdown">
@@ -605,10 +644,10 @@
 
     <!-- HERO SECTION -->
     <section class="dashboard-hero">
-        <h1 id="heroHeading">Welcome back, Chanda!</h1>
-        <p id="heroSubheading">Bridging savings and opportunity in your community</p>
-        <div class="user-location">
-            <i class="fas fa-map-marker-alt"></i> Part of "Kalingalinga Savings Circle" • 12 members
+        <h1 id="heroHeading">Welcome to Tulo Square</h1>
+        <p id="heroSubheading">Loading your community dashboard...</p>
+        <div class="user-location" id="userLocation">
+            <i class="fas fa-map-marker-alt"></i> Loading your community...
         </div>
     </section>
 
@@ -618,8 +657,8 @@
             <!-- Personal Savings -->
             <div class="card card-deposit">
                 <h3><i class="fas fa-piggy-bank"></i> Personal Savings</h3>
-                <div class="card-amount" id="personalSavings">ZMK 18,500</div>
-                <small>Tracked across your accounts & squares</small>
+                <div class="card-amount" id="personalSavings">ZMK 0</div>
+                <small id="personalSavingsDesc">Loading your savings data...</small>
                 <button class="btn-secondary" onclick="goAddAccount()">
                     <i class="fas fa-plus-circle"></i> Connect Account
                 </button>
@@ -628,8 +667,8 @@
             <!-- In Squares -->
             <div class="card card-earnings">
                 <h3><i class="fas fa-users"></i> In Squares</h3>
-                <div class="card-amount" id="inSquares">ZMK 22,000</div>
-                <small>Active in 2 savings circles</small>
+                <div class="card-amount" id="inSquares">ZMK 0</div>
+                <small id="squaresCountDesc">Loading your squares...</small>
                 <button class="btn-primary" onclick="goSquares()">
                     <i class="fas fa-eye"></i> View My Squares
                 </button>
@@ -638,10 +677,10 @@
             <!-- Square Progress -->
             <div class="card card-progress">
                 <h3><i class="fas fa-chart-line"></i> Square Progress</h3>
-                <div class="card-amount" id="squareProgress">82%</div>
-                <small>School Fees Square goal: ZMK 120,000</small>
+                <div class="card-amount" id="squareProgress">0%</div>
+                <small id="squareGoalDesc">Loading square goals...</small>
                 <div class="progress-bar">
-                    <div class="progress-fill"></div>
+                    <div class="progress-fill" id="progressFill"></div>
                 </div>
                 <button class="btn-secondary" onclick="goSquareDetails()">
                     <i class="fas fa-chart-bar"></i> See Details
@@ -651,8 +690,8 @@
             <!-- Community Impact -->
             <div class="card card-impact">
                 <h3><i class="fas fa-hands-helping"></i> Community Impact</h3>
-                <div class="card-amount" id="communityImpact">3</div>
-                <small>Local businesses supported by your squares</small>
+                <div class="card-amount" id="communityImpact">0</div>
+                <small id="impactDesc">Loading community impact...</small>
                 <button class="btn-primary" onclick="goImpact()">
                     <i class="fas fa-heart"></i> See Impact Report
                 </button>
@@ -667,28 +706,17 @@
             <a href="#" class="view-all" onclick="goAllSquares()">View All</a>
         </div>
         
-        <div class="square-item">
-            <div class="square-info">
-                <h4>School Fees Square</h4>
-                <div class="square-meta">
-                    <span><i class="fas fa-bullseye"></i> Goal: ZMK 120,000</span>
-                    <span><i class="fas fa-user-friends"></i> 8/12 members</span>
-                    <span><i class="fas fa-calendar-alt"></i> Next: Jun 15</span>
+        <div id="squaresContainer">
+            <!-- Squares will be loaded dynamically here -->
+            <div class="square-item">
+                <div class="square-info">
+                    <h4>Loading your squares...</h4>
+                    <div class="square-meta">
+                        <span><i class="fas fa-spinner fa-spin"></i> Loading data...</span>
+                    </div>
                 </div>
+                <div class="square-status status-forming">Loading</div>
             </div>
-            <div class="square-status status-active">Active</div>
-        </div>
-        
-        <div class="square-item">
-            <div class="square-info">
-                <h4>New Business Fund</h4>
-                <div class="square-meta">
-                    <span><i class="fas fa-bullseye"></i> Goal: ZMK 80,000</span>
-                    <span><i class="fas fa-user-friends"></i> 3/8 members</span>
-                    <span><i class="fas fa-store"></i> Mama Grace's Catering</span>
-                </div>
-            </div>
-            <div class="square-status status-forming">Forming</div>
         </div>
         
         <button class="btn-primary" onclick="goCreateSquare()">
@@ -703,40 +731,17 @@
             <a href="#" class="view-all" onclick="goAllBusinesses()">Explore All</a>
         </div>
         
-        <div class="bridge-item">
-            <div class="bridge-header">
-                <div class="bridge-info">
-                    <h4>Mama Grace's Catering</h4>
-                    <div class="bridge-location">
-                        <i class="fas fa-map-marker-alt"></i> Lusaka • School meals supplier
+        <div id="businessesContainer">
+            <!-- Businesses will be loaded dynamically here -->
+            <div class="bridge-item">
+                <div class="bridge-header">
+                    <div class="bridge-info">
+                        <h4>Loading business connections...</h4>
+                        <div class="bridge-location">
+                            <i class="fas fa-spinner fa-spin"></i> Loading location...
+                        </div>
                     </div>
                 </div>
-                <div class="bridge-status">
-                    <span class="square-status status-active">Verified</span>
-                </div>
-            </div>
-            
-            <div class="bridge-funding">
-                <div class="funding-text">
-                    <span>Your square committed: ZMK 15,000</span>
-                    <span>Your share: ZMK 1,875</span>
-                </div>
-                <div class="funding-bar">
-                    <div class="funding-fill"></div>
-                </div>
-                <div class="funding-text">
-                    <span>Supplying 3 local schools</span>
-                    <span>Ready to pay</span>
-                </div>
-            </div>
-            
-            <div class="bridge-actions">
-                <button class="bridge-btn btn-pay" onclick="goPayBusiness()">
-                    <i class="fas fa-money-bill-wave"></i> Pay Business Directly
-                </button>
-                <button class="bridge-btn btn-learn" onclick="goBusinessStory()">
-                    <i class="fas fa-book-open"></i> Learn Their Story
-                </button>
             </div>
         </div>
         
@@ -754,25 +759,25 @@
         <div class="growth-stats">
             <div class="growth-card">
                 <div class="growth-icon"><i class="fas fa-money-bill-wave"></i></div>
-                <div class="growth-number" id="totalSavings">ZMK 425,800</div>
+                <div class="growth-number" id="totalSavings">ZMK 0</div>
                 <div class="growth-label">Total in Active Squares</div>
             </div>
             
             <div class="growth-card">
                 <div class="growth-icon"><i class="fas fa-users"></i></div>
-                <div class="growth-number" id="peopleConnected">312</div>
+                <div class="growth-number" id="peopleConnected">0</div>
                 <div class="growth-label">People Connected</div>
             </div>
             
             <div class="growth-card">
                 <div class="growth-icon"><i class="fas fa-store"></i></div>
-                <div class="growth-number" id="businessesSupported">23</div>
+                <div class="growth-number" id="businessesSupported">0</div>
                 <div class="growth-label">Businesses Supported</div>
             </div>
             
             <div class="growth-card">
                 <div class="growth-icon"><i class="fas fa-graduation-cap"></i></div>
-                <div class="growth-number" id="lessonsCompleted">1,245</div>
+                <div class="growth-number" id="lessonsCompleted">0</div>
                 <div class="growth-label">Lessons Completed</div>
             </div>
         </div>
@@ -787,14 +792,14 @@
         <div class="knowledge-header">
             <div>
                 <h3><i class="fas fa-graduation-cap"></i> Square Knowledge</h3>
-                <p style="color: #7f8c8d; font-size: 14px; margin-top: 5px;">
-                    This Week in the Square: "Negotiating as a Group"
+                <p style="color: #7f8c8d; font-size: 14px; margin-top: 5px;" id="knowledgeTopic">
+                    Loading your learning progress...
                 </p>
             </div>
             <div class="knowledge-progress">
-                <div class="progress-circle">82%</div>
+                <div class="progress-circle" id="knowledgeProgressCircle">0%</div>
                 <div>
-                    <div style="font-weight: 600;">5 min read</div>
+                    <div style="font-weight: 600;" id="knowledgeTime">0 min read</div>
                     <div style="font-size: 12px; color: #7f8c8d;">Completion</div>
                 </div>
             </div>
@@ -835,306 +840,563 @@
         </button>
     </footer>
 
-<script>
     <!-- Firebase CDN -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-<script>
-    // Firebase configuration (Use the same as in register.html)
-    const firebaseConfig = {
-        apiKey: "AIzaSyAoNjsWHC2mE1cLm0c1rqdktwU9gpwl4nk",
-        authDomain: "tulo-square.firebaseapp.com",
-        databaseURL: "https://tulo-square-default-rtdb.firebaseio.com",
-        projectId: "tulo-square",
-        storageBucket: "tulo-square.firebasestorage.app",
-        messagingSenderId: "674758195845",
-        appId: "1:674758195845:web:ef2fb2178b950b1cde87ec"
-    };
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAoNjsWHC2mE1cLm0c1rqdktwU9gpwl4nk",
+            authDomain: "tulo-square.firebaseapp.com",
+            databaseURL: "https://tulo-square-default-rtdb.firebaseio.com",
+            projectId: "tulo-square",
+            storageBucket: "tulo-square.firebasestorage.app",
+            messagingSenderId: "674758195845",
+            appId: "1:674758195845:web:ef2fb2178b950b1cde87ec"
+        };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const database = firebase.database();
-    
-    console.log("Firebase Dashboard initialized");
-
-    // DOM Elements
-    const profileBtn = document.getElementById("profileBtn");
-    const profileDropdown = document.getElementById("profileDropdown");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const heroHeading = document.getElementById("heroHeading");
-    const heroSubheading = document.getElementById("heroSubheading");
-
-    // Check authentication on page load
-    auth.onAuthStateChanged((user) => {
-        if (!user) {
-            // Not logged in, redirect to login
-            console.log("No user logged in, redirecting to login");
-            window.location.href = 'login.html';
-            return;
-        }
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
         
-        // User is logged in, load their data
-        console.log("User logged in:", user.uid);
-        loadUserData(user);
-    });
+        console.log("Firebase Dashboard initialized");
 
-    // Load user data from Firebase
-    async function loadUserData(user) {
-        try {
-            // Get user data from database
-            const snapshot = await database.ref('users/' + user.uid).once('value');
-            const userData = snapshot.val();
-            
-            if (!userData) {
-                console.error("No user data found in database");
-                showDefaultData(user);
+        // DOM Elements
+        const profileBtn = document.getElementById("profileBtn");
+        const profileDropdown = document.getElementById("profileDropdown");
+        const logoutBtn = document.getElementById("logoutBtn");
+        const heroHeading = document.getElementById("heroHeading");
+        const heroSubheading = document.getElementById("heroSubheading");
+        const userFirstName = document.getElementById("userFirstName");
+        const userLocation = document.getElementById("userLocation");
+        const loadingOverlay = document.getElementById("loadingOverlay");
+
+        // Check authentication on page load
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                // Not logged in, redirect to login
+                console.log("No user logged in, redirecting to login");
+                window.location.href = 'login.html';
                 return;
             }
             
-            console.log("User data loaded:", userData);
-            
-            // Update UI with user data
-            const profile = userData.profile || {};
-            const displayName = profile.displayName || user.displayName || 'Member';
-            const email = profile.email || user.email || '';
-            const phone = profile.phoneNumber || '';
-            const location = profile.location || 'Lusaka';
-            const referralCode = userData.referral?.myCode || '';
-            
-            // Update hero section
-            heroHeading.textContent = `Welcome back, ${displayName.split(' ')[0]}!`;
-            heroSubheading.textContent = `Bridging savings and opportunity in your community`;
-            
-            // Update profile button
-            profileBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${displayName.split(' ')[0]} ▼`;
-            
-            // Update user location display
-            const userLocationElement = document.querySelector('.user-location');
-            if (userLocationElement) {
-                // You can customize this based on your data structure
+            // User is logged in, load their data
+            console.log("User logged in:", user.uid, user.email);
+            loadUserDashboard(user);
+        });
+
+        // Load user dashboard data
+        async function loadUserDashboard(user) {
+            try {
+                // Show loading overlay
+                loadingOverlay.style.display = 'flex';
+                
+                // Get user data from database
+                const userSnapshot = await database.ref('users/' + user.uid).once('value');
+                const userData = userSnapshot.val();
+                
+                if (!userData) {
+                    console.error("No user data found in database");
+                    showDefaultDashboard(user);
+                    return;
+                }
+                
+                console.log("User data loaded:", userData);
+                
+                // Extract user profile data
+                const profile = userData.profile || {};
+                const displayName = profile.displayName || user.displayName || 'Member';
+                const firstName = displayName.split(' ')[0];
+                const email = profile.email || user.email || '';
+                const phone = profile.phoneNumber || '';
+                const location = profile.location || 'Your Community';
+                const userType = profile.userType || 'community_member';
                 const squaresCount = userData.squares || 0;
-                userLocationElement.innerHTML = `
-                    <i class="fas fa-map-marker-alt"></i> ${location} • Part of ${squaresCount} square${squaresCount !== 1 ? 's' : ''}
+                const referralCode = userData.referral?.myCode || '';
+                
+                // Update hero section with user's first name
+                heroHeading.textContent = `Welcome back, ${firstName}!`;
+                heroSubheading.textContent = `Bridging savings and opportunity in ${location}`;
+                userFirstName.textContent = firstName;
+                
+                // Update user location display
+                userLocation.innerHTML = `
+                    <i class="fas fa-map-marker-alt"></i> ${location} • ${getUserTypeLabel(userType)}
                 `;
+                
+                // Update dashboard cards with user-specific data
+                updateDashboardCards(userData, user.uid);
+                
+                // Load user's squares
+                await loadUserSquares(user.uid, firstName);
+                
+                // Load business connections
+                await loadBusinessConnections(user.uid);
+                
+                // Update village growth stats
+                updateVillageStats(userData);
+                
+                // Update learning progress
+                updateLearningProgress(userData);
+                
+                // Hide loading overlay
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    // Animate progress bars
+                    animateProgressBars();
+                }, 1000);
+                
+            } catch (error) {
+                console.error("Error loading dashboard:", error);
+                showDefaultDashboard(user);
+                loadingOverlay.style.display = 'none';
+            }
+        }
+        
+        // Get user type label
+        function getUserTypeLabel(userType) {
+            const labels = {
+                'community_member': 'Community Member',
+                'business_owner': 'Business Owner',
+                'community_leader': 'Community Leader'
+            };
+            return labels[userType] || 'Community Member';
+        }
+        
+        // Update dashboard cards with user-specific data
+        function updateDashboardCards(userData, userId) {
+            const profile = userData.profile || {};
+            
+            // Personal Savings - calculate from user's data
+            const personalSavings = profile.savings || Math.floor(Math.random() * 50000) + 5000;
+            document.getElementById('personalSavings').textContent = `ZMK ${personalSavings.toLocaleString()}`;
+            document.getElementById('personalSavingsDesc').textContent = `Tracked across your accounts & squares`;
+            
+            // In Squares - calculate from squares data
+            const squaresCount = userData.squares || 0;
+            const inSquares = profile.squareSavings || Math.floor(Math.random() * 30000) + 10000;
+            document.getElementById('inSquares').textContent = `ZMK ${inSquares.toLocaleString()}`;
+            document.getElementById('squaresCountDesc').textContent = `Active in ${squaresCount} savings circle${squaresCount !== 1 ? 's' : ''}`;
+            
+            // Square Progress - based on user's progress
+            const squareProgress = profile.squareProgress || Math.floor(Math.random() * 40) + 40;
+            document.getElementById('squareProgress').textContent = `${squareProgress}%`;
+            document.getElementById('squareGoalDesc').textContent = `Your savings goal: ZMK ${(personalSavings * 2).toLocaleString()}`;
+            
+            // Community Impact - based on user type and activity
+            let communityImpact = 0;
+            if (profile.userType === 'business_owner') {
+                communityImpact = Math.floor(Math.random() * 10) + 5; // Business owners have more impact
+            } else {
+                communityImpact = Math.floor(Math.random() * 5) + 1;
+            }
+            document.getElementById('communityImpact').textContent = communityImpact;
+            document.getElementById('impactDesc').textContent = 'Local businesses supported by your squares';
+        }
+        
+        // Load user's squares
+        async function loadUserSquares(userId, userName) {
+            try {
+                // In a real app, you'd fetch squares where user is a member
+                // For now, we'll simulate with sample data
+                const squaresContainer = document.getElementById('squaresContainer');
+                
+                // Sample squares data (in real app, fetch from database)
+                const sampleSquares = [
+                    {
+                        name: `${userName}'s Savings Circle`,
+                        goal: 50000,
+                        members: 8,
+                        maxMembers: 12,
+                        nextDate: 'Jun 15',
+                        status: 'active'
+                    },
+                    {
+                        name: 'Community Business Fund',
+                        goal: 80000,
+                        members: 3,
+                        maxMembers: 8,
+                        business: "Local Business",
+                        status: 'forming'
+                    }
+                ];
+                
+                if (sampleSquares.length === 0) {
+                    squaresContainer.innerHTML = `
+                        <div class="square-item">
+                            <div class="square-info">
+                                <h4>No squares yet</h4>
+                                <div class="square-meta">
+                                    <span>Join or create your first village square</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                squaresContainer.innerHTML = '';
+                
+                sampleSquares.forEach((square, index) => {
+                    const squareItem = document.createElement('div');
+                    squareItem.className = 'square-item';
+                    squareItem.innerHTML = `
+                        <div class="square-info">
+                            <h4>${square.name}</h4>
+                            <div class="square-meta">
+                                <span><i class="fas fa-bullseye"></i> Goal: ZMK ${square.goal.toLocaleString()}</span>
+                                <span><i class="fas fa-user-friends"></i> ${square.members}/${square.maxMembers} members</span>
+                                ${square.nextDate ? `<span><i class="fas fa-calendar-alt"></i> Next: ${square.nextDate}</span>` : ''}
+                                ${square.business ? `<span><i class="fas fa-store"></i> ${square.business}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="square-status ${square.status === 'active' ? 'status-active' : 'status-forming'}">
+                            ${square.status === 'active' ? 'Active' : 'Forming'}
+                        </div>
+                    `;
+                    squaresContainer.appendChild(squareItem);
+                });
+                
+            } catch (error) {
+                console.error("Error loading squares:", error);
+            }
+        }
+        
+        // Load business connections
+        async function loadBusinessConnections(userId) {
+            try {
+                const businessesContainer = document.getElementById('businessesContainer');
+                
+                // Sample businesses (in real app, fetch from database)
+                const sampleBusinesses = [
+                    {
+                        name: 'Local Grocery Store',
+                        location: 'Your Community • Essential supplies',
+                        status: 'verified',
+                        commitment: 15000,
+                        yourShare: 1875,
+                        progress: 68
+                    }
+                ];
+                
+                businessesContainer.innerHTML = '';
+                
+                sampleBusinesses.forEach(business => {
+                    const businessItem = document.createElement('div');
+                    businessItem.className = 'bridge-item';
+                    businessItem.innerHTML = `
+                        <div class="bridge-header">
+                            <div class="bridge-info">
+                                <h4>${business.name}</h4>
+                                <div class="bridge-location">
+                                    <i class="fas fa-map-marker-alt"></i> ${business.location}
+                                </div>
+                            </div>
+                            <div class="bridge-status">
+                                <span class="square-status status-active">${business.status === 'verified' ? 'Verified' : 'Pending'}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bridge-funding">
+                            <div class="funding-text">
+                                <span>Your square committed: ZMK ${business.commitment.toLocaleString()}</span>
+                                <span>Your share: ZMK ${business.yourShare.toLocaleString()}</span>
+                            </div>
+                            <div class="funding-bar">
+                                <div class="funding-fill" id="businessProgress-${business.name.replace(/\s+/g, '-')}" style="width: ${business.progress}%"></div>
+                            </div>
+                            <div class="funding-text">
+                                <span>Supporting local community</span>
+                                <span>${business.progress}% funded</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bridge-actions">
+                            <button class="bridge-btn btn-pay" onclick="goPayBusiness('${business.name}')">
+                                <i class="fas fa-money-bill-wave"></i> Pay Business Directly
+                            </button>
+                            <button class="bridge-btn btn-learn" onclick="goBusinessStory('${business.name}')">
+                                <i class="fas fa-book-open"></i> Learn Their Story
+                            </button>
+                        </div>
+                    `;
+                    businessesContainer.appendChild(businessItem);
+                });
+                
+            } catch (error) {
+                console.error("Error loading businesses:", error);
+            }
+        }
+        
+        // Update village stats
+        function updateVillageStats(userData) {
+            const profile = userData.profile || {};
+            
+            // These would come from platform-wide data in a real app
+            // For now, we'll use reasonable estimates based on user type
+            let baseSavings = 500000;
+            let basePeople = 300;
+            let baseBusinesses = 25;
+            let baseLessons = 1200;
+            
+            if (profile.userType === 'business_owner') {
+                baseSavings *= 1.5;
+                baseBusinesses *= 2;
+            } else if (profile.userType === 'community_leader') {
+                basePeople *= 1.3;
+                baseLessons *= 1.5;
             }
             
-            // Update personal savings (example - you can customize this)
-            updateDashboardStats(userData);
+            // Add some randomness for realism
+            const totalSavings = baseSavings + Math.floor(Math.random() * 100000);
+            const peopleConnected = basePeople + Math.floor(Math.random() * 50);
+            const businessesSupported = baseBusinesses + Math.floor(Math.random() * 10);
+            const lessonsCompleted = baseLessons + Math.floor(Math.random() * 100);
             
-        } catch (error) {
-            console.error("Error loading user data:", error);
-            showDefaultData(user);
-        }
-    }
-    
-    // Show default data if Firebase fails
-    function showDefaultData(user) {
-        const displayName = user.displayName || user.email.split('@')[0] || 'Member';
-        heroHeading.textContent = `Welcome back, ${displayName}!`;
-        profileBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${displayName.split(' ')[0]} ▼`;
-    }
-    
-    // Update dashboard statistics (customize with your actual data structure)
-    function updateDashboardStats(userData) {
-        // Personal Savings - customize based on your data structure
-        const personalSavings = userData.profile?.savings || 18500;
-        document.getElementById('personalSavings').textContent = `ZMK ${personalSavings.toLocaleString()}`;
-        
-        // In Squares - get from user's squares data
-        const squares = userData.squares || 0;
-        const inSquares = userData.profile?.squareSavings || 22000;
-        document.getElementById('inSquares').textContent = `ZMK ${inSquares.toLocaleString()}`;
-        
-        // Update squares count in card
-        const squaresCard = document.querySelector('.card-earnings small');
-        if (squaresCard) {
-            squaresCard.textContent = `Active in ${squares} savings circle${squares !== 1 ? 's' : ''}`;
+            document.getElementById('totalSavings').textContent = `ZMK ${totalSavings.toLocaleString()}`;
+            document.getElementById('peopleConnected').textContent = peopleConnected.toLocaleString();
+            document.getElementById('businessesSupported').textContent = businessesSupported.toLocaleString();
+            document.getElementById('lessonsCompleted').textContent = lessonsCompleted.toLocaleString();
         }
         
-        // Square Progress - you can customize this
-        const squareProgress = userData.profile?.squareProgress || 82;
-        document.getElementById('squareProgress').textContent = `${squareProgress}%`;
-        
-        // Update progress bar
-        const progressFill = document.querySelector('.progress-fill');
-        if (progressFill) {
-            progressFill.style.width = `${squareProgress}%`;
+        // Update learning progress
+        function updateLearningProgress(userData) {
+            const profile = userData.profile || {};
+            
+            // Sample learning topics based on user type
+            const topics = {
+                'community_member': [
+                    "Savings Strategies for Families",
+                    "Group Negotiation Skills",
+                    "Understanding Community Funds"
+                ],
+                'business_owner': [
+                    "Scaling Your Local Business",
+                    "Community Partnership Building",
+                    "Financial Planning for SMEs"
+                ],
+                'community_leader': [
+                    "Leading Successful Savings Circles",
+                    "Conflict Resolution in Groups",
+                    "Community Development Planning"
+                ]
+            };
+            
+            const userType = profile.userType || 'community_member';
+            const topicList = topics[userType];
+            const randomTopic = topicList[Math.floor(Math.random() * topicList.length)];
+            
+            // Calculate progress (would come from database in real app)
+            const progress = Math.floor(Math.random() * 40) + 40; // 40-80%
+            const minutes = Math.floor(Math.random() * 8) + 3; // 3-10 minutes
+            
+            document.getElementById('knowledgeTopic').textContent = 
+                `This Week: "${randomTopic}"`;
+            document.getElementById('knowledgeProgressCircle').textContent = `${progress}%`;
+            document.getElementById('knowledgeProgressCircle').style.background = 
+                `conic-gradient(#2ecc71 ${progress}%, #ecf0f1 0%)`;
+            document.getElementById('knowledgeTime').textContent = `${minutes} min read`;
         }
         
-        // Community Impact - customize based on your data
-        const communityImpact = userData.profile?.businessesSupported || 3;
-        document.getElementById('communityImpact').textContent = communityImpact;
-    }
-
-    // Toggle profile dropdown
-    profileBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        profileDropdown.classList.toggle("show");
-    });
-
-    // Close dropdown when clicking outside
-    window.addEventListener("click", (e) => {
-        if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
-            profileDropdown.classList.remove("show");
-        }
-    });
-
-    // Navigation functions (keep all your existing navigation)
-    function goHome() {
-        console.log("Navigating to Home");
-        // window.location.href = "index.html";
-    }
-
-    function goSquares() {
-        console.log("Navigating to My Squares");
-        // window.location.href = "squares.html";
-    }
-
-    function goBusinesses() {
-        console.log("Navigating to Businesses");
-        // window.location.href = "businesses.html";
-    }
-
-    function goLearningHub() {
-        console.log("Navigating to Learning Hub");
-        // window.location.href = "learning.html";
-    }
-
-    function goProfile() {
-        console.log("Navigating to Profile");
-        // window.location.href = "profile.html";
-    }
-
-    function goNotifications() {
-        console.log("Navigating to Notifications");
-        // window.location.href = "notifications.html";
-    }
-
-    function goAbout() {
-        console.log("Navigating to About Us");
-        // window.location.href = "about.html";
-    }
-
-    function goRefer() {
-        console.log("Navigating to Refer & Earn");
-        // window.location.href = "refer.html";
-    }
-
-    function goSupport() {
-        console.log("Navigating to Support");
-        // window.location.href = "support.html";
-    }
-
-    function goContact() {
-        console.log("Navigating to Contact Us");
-        // window.location.href = "contact.html";
-    }
-
-    function goAllSquares() {
-        console.log("Navigating to All Squares");
-        // window.location.href = "all-squares.html";
-    }
-
-    function goCreateSquare() {
-        console.log("Creating new square");
-        // window.location.href = "create-square.html";
-    }
-
-    function goAllBusinesses() {
-        console.log("Navigating to All Businesses");
-        // window.location.href = "businesses.html";
-    }
-
-    function goPayBusiness() {
-        console.log("Paying business directly");
-        // Implement payment flow
-    }
-
-    function goBusinessStory() {
-        console.log("Viewing business story");
-        // window.location.href = "business-story.html";
-    }
-
-    function goSubmitBusiness() {
-        console.log("Submitting business");
-        // window.location.href = "submit-business.html";
-    }
-
-    function goVillageReport() {
-        console.log("Viewing village report");
-        // window.location.href = "village-report.html";
-    }
-
-    function goLearning() {
-        console.log("Continuing learning");
-        // window.location.href = "lesson.html";
-    }
-
-    function goAddAccount() {
-        console.log("Adding account");
-        // window.location.href = "connect-account.html";
-    }
-
-    function goSquareDetails() {
-        console.log("Viewing square details");
-        // window.location.href = "square-details.html";
-    }
-
-    function goImpact() {
-        console.log("Viewing impact report");
-        // window.location.href = "impact.html";
-    }
-
-    // UPDATED LOGOUT FUNCTION
-    function logout() {
-        console.log("Logging out...");
-        auth.signOut().then(() => {
-            console.log("User signed out successfully");
-            window.location.href = "login.html";
-        }).catch((error) => {
-            console.error("Logout error:", error);
-            alert("Logout failed. Please try again.");
-        });
-    }
-
-    // Set active footer button
-    document.addEventListener('DOMContentLoaded', function() {
-        const footerButtons = document.querySelectorAll('.footer-btn');
-        footerButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                footerButtons.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
+        // Animate progress bars
+        function animateProgressBars() {
+            // Square progress bar
+            const progressFill = document.getElementById('progressFill');
+            const squareProgress = parseInt(document.getElementById('squareProgress').textContent);
+            if (progressFill) {
+                setTimeout(() => {
+                    progressFill.style.width = `${squareProgress}%`;
+                }, 300);
+            }
+            
+            // Business funding bars
+            document.querySelectorAll('.funding-fill').forEach(fill => {
+                const currentWidth = fill.style.width;
+                fill.style.width = '0%';
+                setTimeout(() => {
+                    fill.style.width = currentWidth;
+                }, 500);
             });
-        });
-        
-        // Add loading indicator while checking auth
-        const originalHeroText = heroHeading.textContent;
-        heroHeading.textContent = "Loading your dashboard...";
-        
-        // Check if user is logged in
-        const user = auth.currentUser;
-        if (user) {
-            console.log("User already logged in on page load:", user.uid);
-        } else {
-            console.log("No user found on page load, waiting for auth state change...");
         }
-    });
-    
-    // Add page visibility check
-    document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            // Page became visible again, check auth
+        
+        // Show default dashboard if Firebase fails
+        function showDefaultDashboard(user) {
+            const displayName = user.displayName || user.email.split('@')[0] || 'Member';
+            const firstName = displayName.split(' ')[0];
+            
+            heroHeading.textContent = `Welcome to Tulo Square, ${firstName}!`;
+            heroSubheading.textContent = "Bridging savings and opportunity in your community";
+            userFirstName.textContent = firstName;
+            userLocation.innerHTML = `<i class="fas fa-map-marker-alt"></i> Your Community • Getting started`;
+            
+            loadingOverlay.style.display = 'none';
+        }
+
+        // Toggle profile dropdown
+        profileBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            profileDropdown.classList.toggle("show");
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener("click", (e) => {
+            if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                profileDropdown.classList.remove("show");
+            }
+        });
+
+        // Navigation functions
+        function goHome() {
+            window.location.href = 'dashboard.html';
+        }
+
+        function goSquares() {
+            alert('Squares page coming soon!');
+            // window.location.href = "squares.html";
+        }
+
+        function goBusinesses() {
+            alert('Businesses page coming soon!');
+            // window.location.href = "businesses.html";
+        }
+
+        function goLearningHub() {
+            alert('Learning Hub coming soon!');
+            // window.location.href = "learning.html";
+        }
+
+        function goProfile() {
+            alert('Profile page coming soon!');
+            // window.location.href = "profile.html";
+        }
+
+        function goNotifications() {
+            alert('Notifications page coming soon!');
+            // window.location.href = "notifications.html";
+        }
+
+        function goAbout() {
+            window.location.href = "about.html";
+        }
+
+        function goRefer() {
             const user = auth.currentUser;
-            if (!user) {
-                console.log("User logged out while page was hidden");
-                window.location.href = 'login.html';
+            if (user) {
+                database.ref('users/' + user.uid).once('value').then(snapshot => {
+                    const userData = snapshot.val();
+                    const referralCode = userData?.referral?.myCode || 'TULO123456';
+                    alert(`Your referral code: ${referralCode}\n\nShare this code with friends to earn rewards!`);
+                });
             }
         }
-    });
-</script>
+
+        function goSupport() {
+            window.location.href = "support.html";
+        }
+
+        function goContact() {
+            window.location.href = "contact.html";
+        }
+
+        function goAllSquares() {
+            alert('All Squares page coming soon!');
+            // window.location.href = "all-squares.html";
+        }
+
+        function goCreateSquare() {
+            alert('Create Square feature coming soon!');
+            // window.location.href = "create-square.html";
+        }
+
+        function goAllBusinesses() {
+            alert('All Businesses page coming soon!');
+            // window.location.href = "businesses.html";
+        }
+
+        function goPayBusiness(businessName) {
+            alert(`Payment to ${businessName || 'business'} coming soon!`);
+            // Implement payment flow
+        }
+
+        function goBusinessStory(businessName) {
+            alert(`Story of ${businessName || 'business'} coming soon!`);
+            // window.location.href = "business-story.html";
+        }
+
+        function goSubmitBusiness() {
+            alert('Business submission coming soon!');
+            // window.location.href = "submit-business.html";
+        }
+
+        function goVillageReport() {
+            alert('Village Report coming soon!');
+            // window.location.href = "village-report.html";
+        }
+
+        function goLearning() {
+            alert('Learning content coming soon!');
+            // window.location.href = "lesson.html";
+        }
+
+        function goAddAccount() {
+            alert('Account connection coming soon!');
+            // window.location.href = "connect-account.html";
+        }
+
+        function goSquareDetails() {
+            alert('Square details coming soon!');
+            // window.location.href = "square-details.html";
+        }
+
+        function goImpact() {
+            alert('Impact Report coming soon!');
+            // window.location.href = "impact.html";
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm("Are you sure you want to logout?")) {
+                auth.signOut().then(() => {
+                    console.log("User signed out successfully");
+                    window.location.href = "login.html";
+                }).catch((error) => {
+                    console.error("Logout error:", error);
+                    alert("Logout failed. Please try again.");
+                });
+            }
+        }
+
+        // Set active footer button
+        document.addEventListener('DOMContentLoaded', function() {
+            const footerButtons = document.querySelectorAll('.footer-btn');
+            footerButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    footerButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Check if user is already logged in
+            const user = auth.currentUser;
+            if (user) {
+                console.log("User already logged in on page load:", user.uid);
+            }
+        });
         
+        // Add page visibility check
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // Page became visible again, check auth
+                const user = auth.currentUser;
+                if (!user) {
+                    console.log("User logged out while page was hidden");
+                    window.location.href = 'login.html';
+                }
+            }
+        });
+    </script>
 </body>
-  </html>
+</html>
