@@ -835,186 +835,306 @@
         </button>
     </footer>
 
-    <script>
-        // Firebase configuration (Replace with your actual config)
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            databaseURL: "YOUR_DATABASE_URL",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
+<script>
+    <!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-        // Initialize Firebase (uncomment when you add your config)
-        // firebase.initializeApp(firebaseConfig);
-        // const database = firebase.database();
+<script>
+    // Firebase configuration (Use the same as in register.html)
+    const firebaseConfig = {
+        apiKey: "AIzaSyAoNjsWHC2mE1cLm0c1rqdktwU9gpwl4nk",
+        authDomain: "tulo-square.firebaseapp.com",
+        databaseURL: "https://tulo-square-default-rtdb.firebaseio.com",
+        projectId: "tulo-square",
+        storageBucket: "tulo-square.firebasestorage.app",
+        messagingSenderId: "674758195845",
+        appId: "1:674758195845:web:ef2fb2178b950b1cde87ec"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+    
+    console.log("Firebase Dashboard initialized");
+
+    // DOM Elements
+    const profileBtn = document.getElementById("profileBtn");
+    const profileDropdown = document.getElementById("profileDropdown");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const heroHeading = document.getElementById("heroHeading");
+    const heroSubheading = document.getElementById("heroSubheading");
+
+    // Check authentication on page load
+    auth.onAuthStateChanged((user) => {
+        if (!user) {
+            // Not logged in, redirect to login
+            console.log("No user logged in, redirecting to login");
+            window.location.href = 'login.html';
+            return;
+        }
         
-        // DOM Elements
-        const profileBtn = document.getElementById("profileBtn");
-        const profileDropdown = document.getElementById("profileDropdown");
-        const logoutBtn = document.getElementById("logoutBtn");
+        // User is logged in, load their data
+        console.log("User logged in:", user.uid);
+        loadUserData(user);
+    });
 
-        // Toggle profile dropdown
-        profileBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            profileDropdown.classList.toggle("show");
-        });
-
-        // Close dropdown when clicking outside
-        window.addEventListener("click", (e) => {
-            if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileDropdown.classList.remove("show");
+    // Load user data from Firebase
+    async function loadUserData(user) {
+        try {
+            // Get user data from database
+            const snapshot = await database.ref('users/' + user.uid).once('value');
+            const userData = snapshot.val();
+            
+            if (!userData) {
+                console.error("No user data found in database");
+                showDefaultData(user);
+                return;
             }
-        });
-
-        // Navigation functions
-        function goHome() {
-            console.log("Navigating to Home");
-            // window.location.href = "index.html";
-        }
-
-        function goSquares() {
-            console.log("Navigating to My Squares");
-            // window.location.href = "squares.html";
-        }
-
-        function goBusinesses() {
-            console.log("Navigating to Businesses");
-            // window.location.href = "businesses.html";
-        }
-
-        function goLearningHub() {
-            console.log("Navigating to Learning Hub");
-            // window.location.href = "learning.html";
-        }
-
-        function goProfile() {
-            console.log("Navigating to Profile");
-            // window.location.href = "profile.html";
-        }
-
-        function goNotifications() {
-            console.log("Navigating to Notifications");
-            // window.location.href = "notifications.html";
-        }
-
-        function goAbout() {
-            console.log("Navigating to About Us");
-            // window.location.href = "about.html";
-        }
-
-        function goRefer() {
-            console.log("Navigating to Refer & Earn");
-            // window.location.href = "refer.html";
-        }
-
-        function goSupport() {
-            console.log("Navigating to Support");
-            // window.location.href = "support.html";
-        }
-
-        function goContact() {
-            console.log("Navigating to Contact Us");
-            // window.location.href = "contact.html";
-        }
-
-        function goAllSquares() {
-            console.log("Navigating to All Squares");
-            // window.location.href = "all-squares.html";
-        }
-
-        function goCreateSquare() {
-            console.log("Creating new square");
-            // window.location.href = "create-square.html";
-        }
-
-        function goAllBusinesses() {
-            console.log("Navigating to All Businesses");
-            // window.location.href = "businesses.html";
-        }
-
-        function goPayBusiness() {
-            console.log("Paying business directly");
-            // Implement payment flow
-        }
-
-        function goBusinessStory() {
-            console.log("Viewing business story");
-            // window.location.href = "business-story.html";
-        }
-
-        function goSubmitBusiness() {
-            console.log("Submitting business");
-            // window.location.href = "submit-business.html";
-        }
-
-        function goVillageReport() {
-            console.log("Viewing village report");
-            // window.location.href = "village-report.html";
-        }
-
-        function goLearning() {
-            console.log("Continuing learning");
-            // window.location.href = "lesson.html";
-        }
-
-        function goAddAccount() {
-            console.log("Adding account");
-            // window.location.href = "connect-account.html";
-        }
-
-        function goSquareDetails() {
-            console.log("Viewing square details");
-            // window.location.href = "square-details.html";
-        }
-
-        function goImpact() {
-            console.log("Viewing impact report");
-            // window.location.href = "impact.html";
-        }
-
-        function logout() {
-            console.log("Logging out");
-            // firebase.auth().signOut().then(() => {
-            //     window.location.href = "login.html";
-            // });
-        }
-
-        // Fetch user data from Firebase (example)
-        function fetchUserData() {
-            // Example Firebase data fetching
-            /*
-            const userId = firebase.auth().currentUser.uid;
-            database.ref('users/' + userId).once('value').then((snapshot) => {
-                const userData = snapshot.val();
-                document.getElementById('heroHeading').textContent = `Welcome back, ${userData.name}!`;
-                document.getElementById('personalSavings').textContent = `ZMK ${userData.savings.toLocaleString()}`;
-                // Update other fields...
-            });
-            */
-        }
-
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Fetch user data from Firebase
-            // fetchUserData();
             
-            // Set active footer button
-            const footerButtons = document.querySelectorAll('.footer-btn');
-            footerButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    footerButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
+            console.log("User data loaded:", userData);
             
-            // Simulate loading data
-            setTimeout(() => {
-                console.log("Dashboard data loaded");
-            }, 500);
+            // Update UI with user data
+            const profile = userData.profile || {};
+            const displayName = profile.displayName || user.displayName || 'Member';
+            const email = profile.email || user.email || '';
+            const phone = profile.phoneNumber || '';
+            const location = profile.location || 'Lusaka';
+            const referralCode = userData.referral?.myCode || '';
+            
+            // Update hero section
+            heroHeading.textContent = `Welcome back, ${displayName.split(' ')[0]}!`;
+            heroSubheading.textContent = `Bridging savings and opportunity in your community`;
+            
+            // Update profile button
+            profileBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${displayName.split(' ')[0]} ▼`;
+            
+            // Update user location display
+            const userLocationElement = document.querySelector('.user-location');
+            if (userLocationElement) {
+                // You can customize this based on your data structure
+                const squaresCount = userData.squares || 0;
+                userLocationElement.innerHTML = `
+                    <i class="fas fa-map-marker-alt"></i> ${location} • Part of ${squaresCount} square${squaresCount !== 1 ? 's' : ''}
+                `;
+            }
+            
+            // Update personal savings (example - you can customize this)
+            updateDashboardStats(userData);
+            
+        } catch (error) {
+            console.error("Error loading user data:", error);
+            showDefaultData(user);
+        }
+    }
+    
+    // Show default data if Firebase fails
+    function showDefaultData(user) {
+        const displayName = user.displayName || user.email.split('@')[0] || 'Member';
+        heroHeading.textContent = `Welcome back, ${displayName}!`;
+        profileBtn.innerHTML = `<i class="fas fa-user-circle"></i> ${displayName.split(' ')[0]} ▼`;
+    }
+    
+    // Update dashboard statistics (customize with your actual data structure)
+    function updateDashboardStats(userData) {
+        // Personal Savings - customize based on your data structure
+        const personalSavings = userData.profile?.savings || 18500;
+        document.getElementById('personalSavings').textContent = `ZMK ${personalSavings.toLocaleString()}`;
+        
+        // In Squares - get from user's squares data
+        const squares = userData.squares || 0;
+        const inSquares = userData.profile?.squareSavings || 22000;
+        document.getElementById('inSquares').textContent = `ZMK ${inSquares.toLocaleString()}`;
+        
+        // Update squares count in card
+        const squaresCard = document.querySelector('.card-earnings small');
+        if (squaresCard) {
+            squaresCard.textContent = `Active in ${squares} savings circle${squares !== 1 ? 's' : ''}`;
+        }
+        
+        // Square Progress - you can customize this
+        const squareProgress = userData.profile?.squareProgress || 82;
+        document.getElementById('squareProgress').textContent = `${squareProgress}%`;
+        
+        // Update progress bar
+        const progressFill = document.querySelector('.progress-fill');
+        if (progressFill) {
+            progressFill.style.width = `${squareProgress}%`;
+        }
+        
+        // Community Impact - customize based on your data
+        const communityImpact = userData.profile?.businessesSupported || 3;
+        document.getElementById('communityImpact').textContent = communityImpact;
+    }
+
+    // Toggle profile dropdown
+    profileBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle("show");
+    });
+
+    // Close dropdown when clicking outside
+    window.addEventListener("click", (e) => {
+        if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+            profileDropdown.classList.remove("show");
+        }
+    });
+
+    // Navigation functions (keep all your existing navigation)
+    function goHome() {
+        console.log("Navigating to Home");
+        // window.location.href = "index.html";
+    }
+
+    function goSquares() {
+        console.log("Navigating to My Squares");
+        // window.location.href = "squares.html";
+    }
+
+    function goBusinesses() {
+        console.log("Navigating to Businesses");
+        // window.location.href = "businesses.html";
+    }
+
+    function goLearningHub() {
+        console.log("Navigating to Learning Hub");
+        // window.location.href = "learning.html";
+    }
+
+    function goProfile() {
+        console.log("Navigating to Profile");
+        // window.location.href = "profile.html";
+    }
+
+    function goNotifications() {
+        console.log("Navigating to Notifications");
+        // window.location.href = "notifications.html";
+    }
+
+    function goAbout() {
+        console.log("Navigating to About Us");
+        // window.location.href = "about.html";
+    }
+
+    function goRefer() {
+        console.log("Navigating to Refer & Earn");
+        // window.location.href = "refer.html";
+    }
+
+    function goSupport() {
+        console.log("Navigating to Support");
+        // window.location.href = "support.html";
+    }
+
+    function goContact() {
+        console.log("Navigating to Contact Us");
+        // window.location.href = "contact.html";
+    }
+
+    function goAllSquares() {
+        console.log("Navigating to All Squares");
+        // window.location.href = "all-squares.html";
+    }
+
+    function goCreateSquare() {
+        console.log("Creating new square");
+        // window.location.href = "create-square.html";
+    }
+
+    function goAllBusinesses() {
+        console.log("Navigating to All Businesses");
+        // window.location.href = "businesses.html";
+    }
+
+    function goPayBusiness() {
+        console.log("Paying business directly");
+        // Implement payment flow
+    }
+
+    function goBusinessStory() {
+        console.log("Viewing business story");
+        // window.location.href = "business-story.html";
+    }
+
+    function goSubmitBusiness() {
+        console.log("Submitting business");
+        // window.location.href = "submit-business.html";
+    }
+
+    function goVillageReport() {
+        console.log("Viewing village report");
+        // window.location.href = "village-report.html";
+    }
+
+    function goLearning() {
+        console.log("Continuing learning");
+        // window.location.href = "lesson.html";
+    }
+
+    function goAddAccount() {
+        console.log("Adding account");
+        // window.location.href = "connect-account.html";
+    }
+
+    function goSquareDetails() {
+        console.log("Viewing square details");
+        // window.location.href = "square-details.html";
+    }
+
+    function goImpact() {
+        console.log("Viewing impact report");
+        // window.location.href = "impact.html";
+    }
+
+    // UPDATED LOGOUT FUNCTION
+    function logout() {
+        console.log("Logging out...");
+        auth.signOut().then(() => {
+            console.log("User signed out successfully");
+            window.location.href = "login.html";
+        }).catch((error) => {
+            console.error("Logout error:", error);
+            alert("Logout failed. Please try again.");
         });
-    </script>
+    }
+
+    // Set active footer button
+    document.addEventListener('DOMContentLoaded', function() {
+        const footerButtons = document.querySelectorAll('.footer-btn');
+        footerButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                footerButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Add loading indicator while checking auth
+        const originalHeroText = heroHeading.textContent;
+        heroHeading.textContent = "Loading your dashboard...";
+        
+        // Check if user is logged in
+        const user = auth.currentUser;
+        if (user) {
+            console.log("User already logged in on page load:", user.uid);
+        } else {
+            console.log("No user found on page load, waiting for auth state change...");
+        }
+    });
+    
+    // Add page visibility check
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            // Page became visible again, check auth
+            const user = auth.currentUser;
+            if (!user) {
+                console.log("User logged out while page was hidden");
+                window.location.href = 'login.html';
+            }
+        }
+    });
+</script>
+        
 </body>
   </html>
