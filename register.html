@@ -16,7 +16,6 @@
       --tzf-white: #ffffff;
       --tzf-success: #2ecc71;
       --tzf-error: #e74c3c;
-      --tzf-warning: #f39c12;
     }
 
     * {
@@ -150,10 +149,6 @@
       font-size: 0.95rem;
     }
 
-    .input-label span {
-      color: var(--tzf-warning);
-    }
-
     .input {
       width: 100%;
       padding: 14px 18px;
@@ -169,14 +164,6 @@
       outline: none;
       border-color: var(--tzf-orange-main);
       box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.2);
-    }
-
-    .input.valid {
-      border-color: var(--tzf-success);
-    }
-
-    .input.invalid {
-      border-color: var(--tzf-error);
     }
 
     .password-wrap {
@@ -198,29 +185,6 @@
 
     .toggle-eye:hover {
       color: var(--tzf-orange-main);
-    }
-
-    /* PASSWORD STRENGTH */
-    .password-strength {
-      margin-top: 8px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .strength-meter {
-      height: 100%;
-      width: 0%;
-      border-radius: 2px;
-      transition: width 0.3s, background-color 0.3s;
-    }
-
-    .strength-label {
-      font-size: 0.8rem;
-      margin-top: 5px;
-      text-align: right;
-      color: var(--tzf-text-muted);
     }
 
     /* BUTTON */
@@ -252,72 +216,33 @@
 
     .primary-btn.success {
       background: linear-gradient(135deg, #2ecc71, #27ae60);
-      animation: pulse 2s infinite;
     }
 
     /* MESSAGES */
-    .error-text, .success-text {
-      animation: fadeIn 0.3s ease-in;
-      position: relative;
-      padding: 15px 40px 15px 15px;
-      margin: 15px 0;
+    .message {
+      padding: 15px;
       border-radius: 8px;
+      margin: 15px 0;
       display: none;
+      animation: fadeIn 0.3s ease-in;
     }
 
-    .error-text i, .success-text i {
-      font-size: 1.2em;
-      margin-right: 10px;
-      vertical-align: middle;
-    }
-
-    .error-text {
-      color: var(--tzf-error);
-      background: rgba(231, 76, 60, 0.1);
-      border-left: 4px solid var(--tzf-error);
-    }
-
-    .success-text {
-      color: var(--tzf-success);
-      background: rgba(46, 204, 113, 0.1);
-      border-left: 4px solid var(--tzf-success);
-      animation: fadeIn 0.3s ease-in, pulse 2s infinite;
-    }
-
-    /* ANIMATIONS */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); }
-      70% { box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+    .error-message {
+      color: var(--tzf-error);
+      background: rgba(231, 76, 60, 0.1);
+      border-left: 4px solid var(--tzf-error);
     }
 
-    @keyframes loading {
-      0% { opacity: 0; }
-      50% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-
-    /* LOADING DOTS */
-    .loading-dots {
-      display: inline-block;
-    }
-
-    .loading-dots span {
-      animation: loading 1.5s infinite;
-      opacity: 0;
-    }
-
-    .loading-dots span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .loading-dots span:nth-child(3) {
-      animation-delay: 0.4s;
+    .success-message {
+      color: var(--tzf-success);
+      background: rgba(46, 204, 113, 0.1);
+      border-left: 4px solid var(--tzf-success);
+      text-align: center;
     }
 
     /* FOOTER & LINKS */
@@ -371,6 +296,14 @@
       text-align: center;
     }
 
+    /* COUNTDOWN */
+    .countdown {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: var(--tzf-success);
+      margin: 10px 0;
+    }
+
     /* RESPONSIVE */
     @media (max-width: 600px) {
       .auth-hero h1 {
@@ -397,28 +330,6 @@
       nav a {
         margin-left: 0;
       }
-    }
-
-    /* DEBUG BUTTON (remove in production) */
-    .debug-btn {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.7);
-      padding: 10px;
-      border-radius: 8px;
-      color: white;
-      font-size: 12px;
-      z-index: 1000;
-    }
-
-    .debug-btn button {
-      background: #3498db;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 4px;
-      cursor: pointer;
     }
   </style>
 </head>
@@ -468,44 +379,35 @@
     </div>
 
     <div class="input-group">
-      <label class="input-label">Full Name <span>*</span></label>
+      <label class="input-label">Full Name</label>
       <input class="input" id="name" placeholder="e.g. Chanda Banda" required />
     </div>
 
     <div class="input-group">
-      <label class="input-label">Email Address <span>*</span></label>
+      <label class="input-label">Email Address</label>
       <input class="input" id="email" type="email" placeholder="your.email@example.com" required />
     </div>
 
     <div class="input-group">
-      <label class="input-label">Phone Number (for community contact) <span>*</span></label>
+      <label class="input-label">Phone Number (for community contact)</label>
       <div class="phone-input">
         <div class="phone-prefix">+260</div>
         <input class="input" id="phone" placeholder="97 123 4567" type="tel" required />
       </div>
-      <small style="color: var(--tzf-text-muted); margin-top: 5px; display: block;">
-        Format: 97 123 4567 (spaces will be added automatically)
-      </small>
     </div>
 
     <div class="input-group">
-      <label class="input-label">Create Password <span>*</span></label>
+      <label class="input-label">Create Password</label>
       <div class="password-wrap">
         <input class="input" id="password" type="password" placeholder="Minimum 6 characters" required />
         <button type="button" class="toggle-eye" onclick="togglePassword('password')">
           <i class="fas fa-eye"></i>
         </button>
       </div>
-      
-      <!-- Password Strength Meter -->
-      <div class="password-strength">
-        <div class="strength-meter" id="strengthMeter"></div>
-      </div>
-      <div class="strength-label" id="strengthLabel">Strength: None</div>
     </div>
 
     <div class="input-group">
-      <label class="input-label">Confirm Password <span>*</span></label>
+      <label class="input-label">Confirm Password</label>
       <div class="password-wrap">
         <input class="input" id="confirmPassword" type="password" placeholder="Re-enter your password" required />
         <button type="button" class="toggle-eye" onclick="togglePassword('confirmPassword')">
@@ -515,14 +417,13 @@
     </div>
 
     <div class="input-group">
-      <label class="input-label">How did you hear about us? <span>*</span></label>
+      <label class="input-label">How did you hear about us?</label>
       <select class="input" id="referralSource" required>
         <option value="">Select one...</option>
         <option value="friend">Friend or Family</option>
         <option value="church">Church/Community Group</option>
         <option value="social">Social Media</option>
         <option value="search">Online Search</option>
-        <option value="event">Community Event</option>
         <option value="other">Other</option>
       </select>
     </div>
@@ -543,8 +444,8 @@
       </div>
     </div>
 
-    <div id="signupError" class="error-text" onclick="this.style.display='none'"></div>
-    <div id="signupSuccess" class="success-text" onclick="this.style.display='none'"></div>
+    <!-- Messages Container -->
+    <div id="messageContainer"></div>
 
     <button type="submit" class="primary-btn" id="signupBtn">
       <i class="fas fa-user-plus"></i> Join Tulo Square
@@ -565,16 +466,34 @@
   </p>
 </footer>
 
-<!-- DEBUG BUTTON (remove in production) -->
-<div class="debug-btn">
-  <button onclick="testFirebase()">Test Firebase</button>
-</div>
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
+  // Your Firebase configuration (use the same as in firebase.js)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAoNjsWHC2mE1cLm0c1rqdktwU9gpwl4nk",
+    authDomain: "tulo-square.firebaseapp.com",
+    databaseURL: "https://tulo-square-default-rtdb.firebaseio.com",
+    projectId: "tulo-square",
+    storageBucket: "tulo-square.firebasestorage.app",
+    messagingSenderId: "674758195845",
+    appId: "1:674758195845:web:ef2fb2178b950b1cde87ec"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+
+  console.log("Firebase initialized:", { auth, db });
+
   // Password toggle function
   function togglePassword(id) {
     const input = document.getElementById(id);
-    const eyeIcon = input.parentElement.querySelector('.fa-eye, .fa-eye-slash');
+    const eyeIcon = input.parentElement.querySelector('.fa-eye');
     if (input.type === "password") {
       input.type = "text";
       eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -584,454 +503,219 @@
     }
   }
 
-  // Auto-fill referral code from URL
-  document.addEventListener('DOMContentLoaded', function() {
-    const params = new URLSearchParams(window.location.search);
-    const refCode = params.get("ref");
-    
-    if (refCode) {
-      const referralInput = document.getElementById("referralCode");
-      if (referralInput) {
-        referralInput.value = refCode;
+  // Format phone number
+  document.getElementById('phone').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 0) {
+      if (value.length <= 3) {
+        value = value;
+      } else if (value.length <= 6) {
+        value = value.slice(0, 3) + ' ' + value.slice(3);
+      } else {
+        value = value.slice(0, 3) + ' ' + value.slice(3, 6) + ' ' + value.slice(6, 9);
       }
     }
-    
-    // Format phone number as user types
-    const phoneInput = document.getElementById('phone');
-    if (phoneInput) {
-      phoneInput.addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length > 0) {
-          if (value.length <= 3) {
-            value = value;
-          } else if (value.length <= 6) {
-            value = value.slice(0, 3) + ' ' + value.slice(3);
-          } else {
-            value = value.slice(0, 3) + ' ' + value.slice(3, 6) + ' ' + value.slice(6, 9);
-          }
-        }
-        e.target.value = value;
-      });
-    }
-
-    // Password strength checker
-    const passwordInput = document.getElementById('password');
-    if (passwordInput) {
-      passwordInput.addEventListener('input', function() {
-        const password = this.value;
-        const meter = document.getElementById('strengthMeter');
-        const label = document.getElementById('strengthLabel');
-        
-        if (!password) {
-          meter.style.width = '0%';
-          label.textContent = 'Strength: None';
-          label.style.color = 'var(--tzf-text-muted)';
-          return;
-        }
-        
-        let strength = 0;
-        const requirements = {
-          length: password.length >= 6,
-          lowercase: /[a-z]/.test(password),
-          uppercase: /[A-Z]/.test(password),
-          number: /[0-9]/.test(password),
-          special: /[^A-Za-z0-9]/.test(password)
-        };
-        
-        Object.values(requirements).forEach(req => {
-          if (req) strength += 20;
-        });
-        
-        meter.style.width = strength + '%';
-        
-        if (strength < 40) {
-          meter.style.backgroundColor = 'var(--tzf-error)';
-          label.textContent = 'Strength: Weak';
-          label.style.color = 'var(--tzf-error)';
-        } else if (strength < 70) {
-          meter.style.backgroundColor = 'var(--tzf-warning)';
-          label.textContent = 'Strength: Fair';
-          label.style.color = 'var(--tzf-warning)';
-        } else if (strength < 90) {
-          meter.style.backgroundColor = 'var(--tzf-accent-blue)';
-          label.textContent = 'Strength: Good';
-          label.style.color = 'var(--tzf-accent-blue)';
-        } else {
-          meter.style.backgroundColor = 'var(--tzf-success)';
-          label.textContent = 'Strength: Strong';
-          label.style.color = 'var(--tzf-success)';
-        }
-      });
-    }
-
-    // Password match checker
-    const confirmPasswordInput = document.getElementById('confirmPassword');
-    if (confirmPasswordInput && passwordInput) {
-      confirmPasswordInput.addEventListener('input', function() {
-        if (this.value && passwordInput.value !== this.value) {
-          this.classList.add('invalid');
-          this.classList.remove('valid');
-        } else if (this.value) {
-          this.classList.add('valid');
-          this.classList.remove('invalid');
-        } else {
-          this.classList.remove('valid', 'invalid');
-        }
-      });
-    }
+    e.target.value = value;
   });
 
-  // Test Firebase function
-  window.testFirebase = async function() {
-    console.log('=== Testing Firebase Connection ===');
-    try {
-      alert('Testing Firebase connection... Check browser console (F12) for results.');
-    } catch (e) {
-      console.error('Firebase test failed:', e);
-      alert('Firebase connection test failed: ' + e.message);
-    }
-  };
-</script>
+  // Show message function
+  function showMessage(type, message) {
+    const container = document.getElementById('messageContainer');
+    container.innerHTML = `
+      <div class="message ${type === 'error' ? 'error-message' : 'success-message'}">
+        <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
+        ${message}
+      </div>
+    `;
+    container.style.display = 'block';
+  }
 
-<!-- FIREBASE REGISTRATION SCRIPT -->
-<script type="module">
-  import { auth, db } from "./firebase.js";
-  import { 
-    createUserWithEmailAndPassword, 
-    updateProfile,
-    sendEmailVerification 
-  } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-  import { 
-    ref, 
-    set 
-  } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+  // Clear message function
+  function clearMessage() {
+    const container = document.getElementById('messageContainer');
+    container.innerHTML = '';
+    container.style.display = 'none';
+  }
 
-  // Initialize on DOM load
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔥 Firebase Registration Script Loaded');
+  // Form submission
+  document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
     
-    const signupForm = document.getElementById('signupForm');
-    const signupBtn = document.getElementById('signupBtn');
-    const errorDiv = document.getElementById('signupError');
-    const successDiv = document.getElementById('signupSuccess');
-    const termsCheckbox = document.getElementById('terms');
+    // Get form values
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const referralSource = document.getElementById('referralSource').value;
+    const referralCode = document.getElementById('referralCode').value.trim();
+    const terms = document.getElementById('terms').checked;
     
-    if (!signupForm) {
-      console.error('❌ Signup form not found!');
+    // Basic validation
+    if (!terms) {
+      showMessage('error', 'You must agree to the Terms of Service and Privacy Policy');
       return;
     }
     
-    console.log('✅ Form elements found:', { signupForm, signupBtn, errorDiv, successDiv });
-    
-    // Form submission handler
-    signupForm.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      console.log('📝 Form submission started');
-      
-      // Check terms agreement
-      if (!termsCheckbox.checked) {
-        showError('You must agree to the Terms of Service and Privacy Policy');
-        return;
-      }
-      
-      // Get form values
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-      const referralSource = document.getElementById('referralSource').value;
-      const referralCode = document.getElementById('referralCode').value.trim();
-      
-      console.log('📋 Form data:', { name, email, phone: '***', referralSource });
-      
-      // Basic validation
-      if (!name || !email || !phone || !password || !confirmPassword || !referralSource) {
-        showError('Please fill in all required fields');
-        return;
-      }
-      
-      if (password.length < 6) {
-        showError('Password must be at least 6 characters long');
-        return;
-      }
-      
-      if (password !== confirmPassword) {
-        showError('Passwords do not match');
-        return;
-      }
-      
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        showError('Please enter a valid email address');
-        return;
-      }
-      
-      // Validate phone format (Zambian)
-      const phoneDigits = phone.replace(/\D/g, '');
-      if (phoneDigits.length !== 9 && phoneDigits.length !== 10) {
-        showError('Please enter a valid Zambian phone number (e.g., 97 123 4567)');
-        return;
-      }
-      
-      // Validate name length
-      if (name.length < 2 || name.length > 50) {
-        showError('Name must be between 2 and 50 characters');
-        return;
-      }
-      
-      // Show loading state
-      signupBtn.disabled = true;
-      signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>';
-      
-      // Clear previous messages
-      clearMessages();
-      
-      try {
-        console.log('🚀 Starting Firebase registration...');
-        
-        // 1. Create user in Firebase Authentication
-        console.log('🔐 Creating Firebase Auth user...');
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        console.log('✅ Firebase Auth user created:', { uid: user.uid, email: user.email });
-        
-        // 2. Update profile with display name
-        console.log('👤 Updating user profile...');
-        await updateProfile(user, { displayName: name });
-        console.log('✅ User profile updated');
-        
-        // 3. Generate Tulo Square referral code
-        const myReferralCode = "TULO" + Math.floor(100000 + Math.random() * 900000);
-        console.log('🎯 Generated referral code:', myReferralCode);
-        
-        // 4. Format phone number
-        const fullPhone = '+260' + phoneDigits;
-        
-        // 5. Create user data structure
-        const userData = {
-          profile: {
-            uid: user.uid,
-            email: email,
-            displayName: name,
-            phoneNumber: fullPhone,
-            userType: "community_member",
-            communityRole: "member",
-            kycStatus: "pending",
-            location: "",
-            communityBio: "",
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-            lastLogin: Date.now()
-          },
-          preferences: {
-            notifications: true,
-            language: "en",
-            privacy: "public"
-          },
-          referral: {
-            myCode: myReferralCode,
-            referralSource: referralSource,
-            referredBy: referralCode || null
-          },
-          squares: 0,
-          role: "user"
-        };
-        
-        console.log('💾 Writing to Realtime Database...');
-        console.log('📁 Path: users/' + user.uid);
-        console.log('📄 Data structure:', JSON.stringify(userData, null, 2));
-        
-        // 6. Save to Realtime Database
-        const userRef = ref(db, 'users/' + user.uid);
-        await set(userRef, userData);
-        console.log('✅ User data written to Realtime Database');
-        
-        // 7. Log referral if provided
-        if (referralCode) {
-          try {
-            const referralLog = {
-              referrerCode: referralCode,
-              newUserId: user.uid,
-              newUserEmail: email,
-              newUserName: name,
-              timestamp: Date.now()
-            };
-            await set(ref(db, 'referralLogs/' + referralCode + '_' + user.uid), referralLog);
-            console.log('✅ Referral logged successfully');
-          } catch (referralError) {
-            console.warn('⚠️ Could not log referral:', referralError);
-          }
-        }
-        
-        // 8. Send email verification
-        try {
-          await sendEmailVerification(user);
-          console.log('✅ Verification email sent');
-        } catch (verificationError) {
-          console.warn('⚠️ Could not send verification email:', verificationError);
-        }
-        
-        // 9. SUCCESS - Update UI
-        console.log('🎉 Registration successful!');
-        
-        // Update button to success state
-        signupBtn.classList.add('success');
-        signupBtn.innerHTML = '<i class="fas fa-check"></i> Account Created!';
-        
-        // Show success message
-        showSuccess(`
-          <div style="text-align: center;">
-            <i class="fas fa-check-circle" style="font-size: 2em; margin-bottom: 10px; display: block; color: #2ecc71;"></i>
-            <strong style="font-size: 1.2em; display: block; margin-bottom: 10px;">Welcome to Tulo Square, ${name}!</strong>
-            <p style="margin: 10px 0;">
-              Your account has been created successfully!<br>
-              <strong>Your referral code:</strong> <span style="background: rgba(46, 204, 113, 0.2); padding: 5px 10px; border-radius: 4px; font-family: monospace;">${myReferralCode}</span>
-            </p>
-            <p style="margin: 10px 0; font-size: 0.9em;">
-              <i class="fas fa-info-circle"></i> You will be redirected to login in <span id="countdown">5</span> seconds...
-            </p>
-          </div>
-        `);
-        
-        // 10. Start countdown and redirect
-        let countdown = 5;
-        const countdownElement = document.getElementById('countdown');
-        const countdownInterval = setInterval(() => {
-          countdown--;
-          if (countdownElement) countdownElement.textContent = countdown;
-          if (countdown <= 0) {
-            clearInterval(countdownInterval);
-            redirectToLogin(email);
-          }
-        }, 1000);
-        
-      } catch (error) {
-        // ERROR - Handle failure
-        console.error('❌ Registration failed:', error);
-        
-        // Reset button
-        signupBtn.disabled = false;
-        signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Join Tulo Square';
-        signupBtn.classList.remove('success');
-        
-        // Parse error message
-        let userMessage = 'Error creating account. ';
-        let detailedMessage = '';
-        
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            userMessage = 'This email is already registered.';
-            detailedMessage = 'Please use a different email or try <a href="login.html" style="color: #e67e22;">logging in</a> if this is your account.';
-            break;
-          case 'auth/invalid-email':
-            userMessage = 'Invalid email address.';
-            detailedMessage = 'Please check your email format (example: name@domain.com).';
-            break;
-          case 'auth/weak-password':
-            userMessage = 'Password is too weak.';
-            detailedMessage = 'Please use at least 6 characters with a mix of letters and numbers.';
-            break;
-          case 'auth/operation-not-allowed':
-            userMessage = 'Email/password sign-up is currently disabled.';
-            detailedMessage = 'Please contact support at support@tulosquare.co.zm';
-            break;
-          case 'auth/network-request-failed':
-            userMessage = 'Network error.';
-            detailedMessage = 'Please check your internet connection and try again.';
-            break;
-          case 'PERMISSION_DENIED':
-          case 'permission_denied':
-          case 'database/permission-denied':
-            userMessage = 'Database permission denied.';
-            detailedMessage = 'This might be a security rules issue. Please contact support.';
-            break;
-          default:
-            userMessage = 'Registration failed. ';
-            detailedMessage = error.message || 'Unknown error occurred.';
-        }
-        
-        // Show error to user
-        showError(`
-          <div>
-            <strong>${userMessage}</strong><br>
-            ${detailedMessage}<br><br>
-            <small style="opacity: 0.8;">
-              <i class="fas fa-life-ring"></i> Need help? Contact support: support@tulosquare.co.zm
-            </small>
-          </div>
-        `);
-      }
-    });
-    
-    // Helper functions
-    function clearMessages() {
-      if (errorDiv) {
-        errorDiv.style.display = 'none';
-        errorDiv.innerHTML = '';
-      }
-      if (successDiv) {
-        successDiv.style.display = 'none';
-        successDiv.innerHTML = '';
-      }
+    if (password !== confirmPassword) {
+      showMessage('error', 'Passwords do not match');
+      return;
     }
     
-    function showError(message) {
-      console.log('Showing error message');
-      if (errorDiv) {
-        errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-        errorDiv.style.display = 'block';
-        if (successDiv) successDiv.style.display = 'none';
-        
-        // Scroll to error
-        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+    if (password.length < 6) {
+      showMessage('error', 'Password must be at least 6 characters');
+      return;
     }
     
-    function showSuccess(message) {
-      console.log('Showing success message');
-      if (successDiv) {
-        successDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-        successDiv.style.display = 'block';
-        if (errorDiv) errorDiv.style.display = 'none';
-        
-        // Scroll to success
-        successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        // Play success sound (optional)
-        try {
-          const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3');
-          audio.volume = 0.3;
-          audio.play().catch(e => console.log('Audio play failed:', e));
-        } catch (e) {
-          // Ignore audio errors
-        }
-      }
-    }
+    // Format phone
+    const phoneDigits = phone.replace(/\D/g, '');
+    const fullPhone = '+260' + phoneDigits;
     
-    function redirectToLogin(email) {
-      console.log('🔗 Redirecting to login page...');
-      const params = new URLSearchParams({
-        registration: 'success',
-        email: email,
-        message: 'welcome_to_tulo_square'
+    // Disable button and show loading
+    const signupBtn = document.getElementById('signupBtn');
+    signupBtn.disabled = true;
+    signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+    
+    clearMessage();
+    
+    try {
+      console.log("Attempting to create user...");
+      
+      // 1. Create user in Firebase Auth
+      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      console.log("User created:", user.uid);
+      
+      // 2. Update profile
+      await user.updateProfile({
+        displayName: name
       });
-      window.location.href = `login.html?${params.toString()}`;
-    }
-    
-    // Test Firebase connection on page load
-    console.log('🔄 Testing Firebase connection...');
-    console.log('🔧 Auth service:', auth ? '✅ Available' : '❌ Not available');
-    console.log('🗄️ Database service:', db ? '✅ Available' : '❌ Not available');
-    
-    if (!auth || !db) {
-      console.error('❌ Firebase services not initialized properly');
-      showError('Firebase services not loaded. Please refresh the page.');
-    } else {
-      console.log('✅ Firebase initialized successfully');
+      
+      // 3. Generate referral code
+      const myReferralCode = "TULO" + Math.floor(100000 + Math.random() * 900000);
+      
+      // 4. Prepare user data
+      const userData = {
+        profile: {
+          uid: user.uid,
+          email: email,
+          displayName: name,
+          phoneNumber: fullPhone,
+          userType: "community_member",
+          communityRole: "member",
+          kycStatus: "pending",
+          location: "",
+          communityBio: "",
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          lastLogin: Date.now()
+        },
+        preferences: {
+          notifications: true,
+          language: "en",
+          privacy: "public"
+        },
+        referral: {
+          myCode: myReferralCode,
+          referralSource: referralSource,
+          referredBy: referralCode || null
+        },
+        squares: 0,
+        role: "user"
+      };
+      
+      // 5. Save to Realtime Database
+      await db.ref('users/' + user.uid).set(userData);
+      console.log("User data saved to database");
+      
+      // 6. Log referral if exists
+      if (referralCode) {
+        await db.ref('referralLogs/' + referralCode + '_' + user.uid).set({
+          referrerCode: referralCode,
+          newUserId: user.uid,
+          newUserEmail: email,
+          newUserName: name,
+          timestamp: Date.now()
+        });
+      }
+      
+      // 7. Send verification email
+      await user.sendEmailVerification();
+      
+      // 8. SUCCESS - Show message and redirect
+      signupBtn.classList.add('success');
+      signupBtn.innerHTML = '<i class="fas fa-check"></i> Account Created!';
+      
+      showMessage('success', `
+        <div style="text-align: center;">
+          <i class="fas fa-check-circle" style="font-size: 2em; display: block; margin-bottom: 10px;"></i>
+          <strong>Welcome to Tulo Square, ${name}!</strong><br>
+          Your account has been created successfully.<br>
+          <div style="margin: 10px 0; padding: 10px; background: rgba(46, 204, 113, 0.2); border-radius: 8px;">
+            <strong>Your referral code:</strong><br>
+            <span style="font-family: monospace; font-size: 1.2em;">${myReferralCode}</span>
+          </div>
+          <div class="countdown">Redirecting to login in <span id="countdown">5</span> seconds...</div>
+        </div>
+      `);
+      
+      // 9. Countdown and redirect
+      let seconds = 5;
+      const countdownElement = document.getElementById('countdown');
+      const countdownInterval = setInterval(() => {
+        seconds--;
+        countdownElement.textContent = seconds;
+        
+        if (seconds <= 0) {
+          clearInterval(countdownInterval);
+          window.location.href = `login.html?registration=success&email=${encodeURIComponent(email)}`;
+        }
+      }, 1000);
+      
+    } catch (error) {
+      console.error("Registration error:", error);
+      
+      // Reset button
+      signupBtn.disabled = false;
+      signupBtn.innerHTML = '<i class="fas fa-user-plus"></i> Join Tulo Square';
+      signupBtn.classList.remove('success');
+      
+      // Show error
+      let errorMessage = "Registration failed. ";
+      
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          errorMessage = "This email is already registered. Try logging in instead.";
+          break;
+        case 'auth/invalid-email':
+          errorMessage = "Invalid email address.";
+          break;
+        case 'auth/weak-password':
+          errorMessage = "Password is too weak. Use at least 6 characters.";
+          break;
+        case 'auth/operation-not-allowed':
+          errorMessage = "Email/password accounts are not enabled. Contact support.";
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = "Network error. Check your connection.";
+          break;
+        case 'PERMISSION_DENIED':
+          errorMessage = "Database permission denied. Contact support.";
+          break;
+        default:
+          errorMessage += error.message;
+      }
+      
+      showMessage('error', errorMessage);
     }
   });
+
+  // Auto-fill referral code from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('ref');
+  if (refCode) {
+    document.getElementById('referralCode').value = refCode;
+  }
 </script>
 
 </body>
